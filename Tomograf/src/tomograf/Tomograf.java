@@ -19,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javax.swing.ImageIcon;
 
@@ -45,11 +46,19 @@ public class Tomograf extends Application {
 
     
         Picture picture = new Picture();
+        
+        
+        TilePane tile=new TilePane();
+        tile.setPrefColumns(3);
         ImageView iw1 = new ImageView(picture.getImg());
+        iw1.setFitHeight(150);
+        iw1.setFitWidth(150);
+        tile.getChildren().add(iw1);
         ImageView iw2 = new ImageView();
         ImageView iw3 = new ImageView();
+        ImageView iw4 = new ImageView();
 
-        Pane pane = new BorderPane(hb, iw1, iw2, iw3, slider);
+        Pane pane = new BorderPane(hb, tile, iw2, iw3, iw4);
 
         /*
         label1.setIcon(imgIcon);
