@@ -22,6 +22,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javax.swing.ImageIcon;
+import java.awt.image.*;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -44,32 +49,48 @@ public class Tomograf extends Application {
 
         HBox hb = new HBox();
 
-    
+        TilePane tile = new TilePane();
+        tile.setPadding(new Insets(3));
+        tile.setPrefColumns(1);
+        tile.setAlignment(Pos.CENTER);
+        tile.setHgap(20);
         Picture picture = new Picture();
-        
-        
-        TilePane tile=new TilePane();
-        tile.setPrefColumns(3);
-        ImageView iw1 = new ImageView(picture.getImg());
-        iw1.setFitHeight(150);
-        iw1.setFitWidth(150);
+        Image image1 = SwingFXUtils.toFXImage(picture.getBi(), null);
+        Sinogram sinogram = new Sinogram(picture, 180, 200,1000);
+        Image image2 = SwingFXUtils.toFXImage(sinogram.getBuf(), null);
+         TomographyPicture tomografPic=new TomographyPicture(picture,sinogram);
+        Image image3 = SwingFXUtils.toFXImage(tomografPic.getBuf(), null);
+
+        ImageView iw1 = new ImageView(image1);
+        iw1.setFitHeight(300);
+        iw1.setFitWidth(300);
         tile.getChildren().add(iw1);
-        ImageView iw2 = new ImageView();
-        ImageView iw3 = new ImageView();
-        ImageView iw4 = new ImageView();
 
-        Pane pane = new BorderPane(hb, tile, iw2, iw3, iw4);
+        ImageView iw2 = new ImageView(image2);
+        iw2.setFitHeight(300);
+        iw2.setFitWidth(300);
+        tile.getChildren().add(iw2);
 
-        /*
-        label1.setIcon(imgIcon);
+        ImageView iw3 = new ImageView(image3);
+        iw3.setFitHeight(300);
+        iw3.setFitWidth(300);
+        tile.getChildren().add(iw3);
+
+        // label1.setIcon(imgIcon);
+        /*   Label label2=new Label();
         Sinogram sinogram = new Sinogram(picture, 180, 200,1000);
         ImageIcon imgIcon2 = new ImageIcon(sinogram.getBuf());
-      label2.setIcon(imgIcon2);
+        
+         */
+        //label2.setIcon(imgIcon2);
+        /*
         TomographyPicture tomografPic=new TomographyPicture(picture,sinogram);
          ImageIcon imgIcon3 = new ImageIcon(tomografPic.getBuf());
         label3.setIcon(imgIcon3);
          */
-        Scene scene = new Scene(pane, 700, 700);
+        Pane pane = new BorderPane(tile, hb, null, slider, null);
+       
+        Scene scene = new Scene(pane, 1500  , 800);
         primaryStage.setTitle("Tomograf");
         primaryStage.setScene(scene);
         primaryStage.show();
