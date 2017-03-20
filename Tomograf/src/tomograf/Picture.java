@@ -14,7 +14,7 @@ import javafx.scene.image.Image;
  */
 public class Picture {
 
-    File f = new File("file:C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf");
+    File f = new File("file:C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obraz.bmp");
     Image img = new Image(f.toURI().toString());
 
     public Image getImg() {
