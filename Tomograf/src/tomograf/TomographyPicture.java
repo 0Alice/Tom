@@ -29,12 +29,6 @@ public class TomographyPicture {
     private final int radious;//promien okreku wpisanego w obraz
     private int processed;//liczba wykonanych iteracji
 
-    /**
-     *
-     * @param img Obrazek
-     * @param angle rozwarość stożka
-     * @param n liczba detektorow
-     */
     public TomographyPicture(Sinogram sinogram) {
         this.angle = sinogram.getAngle();
         emitersAmount = sinogram.getEmitersAmount();

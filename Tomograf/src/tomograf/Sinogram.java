@@ -29,6 +29,9 @@ public class Sinogram {
     /**
      *
      * @param img Obrazek
+     * @param angle kąt rozwarcia stożka
+     * @param detecotrs liczba detektorów
+     * @param emiters liczba emiterów
      */
     public Sinogram(Picture img, int angle, int detecotrs, int emiters) {
         this.angle = angle;
