@@ -14,53 +14,91 @@ import java.awt.image.BufferedImage;
  */
 public class Sinogram {
 
-    private Color[][] pix;//[360][n]
-    private BufferedImage buf;
+    private final Color[][] pix;//kolor piksela w sinogramie przed normalizacja
+    private Color[][] normalizedPix;//kolor piksela w sionogramie po normalizacji
+    private BufferedImage sinogram;//wynikowy obraz (sionogram)
+    private final BufferedImage originalPicture;//wejsciowy obraz (musi byc w kwadracie)
+    private int processed;//liczba wykonanych iteracji
 
-    private int emitersAmount;
-    private int detectorsAmount;
-    private int angle;
+    private final int emitersAmount;//liczba emiterow
+    private final int detectorsAmount;//liczba detektorow
+    private final int angle;//kat rozwarcia stozka
+    private final int radious;//promien okreku wpisanego w obraz
+    private final int pictureWidth;//szerokosc wejsciowego obrazu
 
     /**
      *
      * @param img Obrazek
-     * @param B rozwarość stożka
-     * @param n liczba detektorow
      */
     public Sinogram(Picture img, int angle, int detecotrs, int emiters) {
         this.angle = angle;
         emitersAmount = emiters;
         detectorsAmount = detecotrs;
-        buf = new BufferedImage(emitersAmount, detectorsAmount, BufferedImage.TYPE_BYTE_GRAY);
-        int r = (img.getBi().getWidth() / 2) - 5;
-        BufferedImage bi = img.getBi();
+        sinogram = new BufferedImage(emitersAmount, detectorsAmount, BufferedImage.TYPE_BYTE_GRAY);
+        pictureWidth = img.getBi().getWidth();
+        radious = (pictureWidth / 2) - 5;
+        originalPicture = img.getBi();
         pix = new Color[emitersAmount][detectorsAmount];
-
-        //to trzeba dostosowac
-        for (int i = 0; i < emitersAmount; i++) {
+        normalizedPix = new Color[emitersAmount][detectorsAmount];
+        processed=0;
+        
+    }
+    public void fullProcess(){
+    this.processing(emitersAmount);
+    }
+    public void processing(int iterations){
+        for (int i = processed; i < processed+iterations; i++) {
             double help0 = i * Math.PI / 180;
-            Double EmiterX = Math.cos(help0) * r + r;
-            Double EmiterY = Math.sin(help0) * (-r) + r;
+            Double EmiterX = Math.cos(help0) * radious + radious;
+            Double EmiterY = Math.sin(help0) * (-radious) + radious;
             for (int j = 0; j < detectorsAmount; j++) {
                 double help = help0 + Math.PI - (angle * Math.PI) / 360 + (angle * Math.PI * j) / (180 * (detectorsAmount - 1));
-                Double DetektorX = Math.cos(help) * r + r;
-                Double DetektorY = Math.sin(help) * (-r) + r;
-                //pix[i][j] 
-                //    System.out.println("r " + r + "   help  " + help);
-                // System.out.println("ex " + EmiterX.intValue() + " ey " + EmiterY.intValue() + " dx " + DetektorX.intValue() + " dy " + DetektorY.intValue());
-
-                pix[i][j] = BresenhamLine(EmiterX.intValue(), EmiterY.intValue(), DetektorX.intValue(), DetektorY.intValue(), bi);
-                // System.out.println("x  " + i + "   j   " + j + "  rgb   " + pix[i][j]);
-                //  PixelGrabber pixelGrab = new PixelGrabber(bi, EmiterX.intValue(), EmiterY.intValue(), 1, 1, pix, off, 1);
-                // setRGB(pix[i][j].getRed(),pix[i][j].getGreen(),pix[i][j].getBlue());
-                buf.setRGB(i, j, pix[i][j].getRGB());
+                Double DetektorX = Math.cos(help) * radious + radious;
+                Double DetektorY = Math.sin(help) * (-radious) + radious;
+                pix[i][j] = BresenhamLine(EmiterX.intValue(), EmiterY.intValue(), DetektorX.intValue(), DetektorY.intValue(), originalPicture);
             }
         }
+        normalize(processed+iterations);
+        for (int i = 0; i < processed+iterations; i++) {
+            for (int j = 0; j < detectorsAmount; j++) {
+                sinogram.setRGB(i, j, normalizedPix[i][j].getRGB());
+            }
+        }
+        processed+=iterations;
+    }
+
+        private void normalize(int iterations){
+        int max=0;
+        int min=255;
+        for (int i = 0; i < iterations; i++) {
+            for (int j = 0; j < detectorsAmount; j++) {
+                int pixelColor=0;
+                try{
+                pixelColor=(pix[i][j].getRGB()& 0x00ff0000) >> 16;
+                }catch(java.lang.NullPointerException z){
+                pixelColor=0;
+                pix[i][j]=new Color(0,0,0);
+            }
+                if(pixelColor>max){
+                    max=pixelColor;
+                }
+                if(pixelColor<min){//&&e!=0){
+                    min=pixelColor;
+                }
+            }
+        }
+         for (int i = 0; i < iterations; i++) {
+            for (int j = 0; j < detectorsAmount; j++) {
+               int kol=(int)((((pix[i][j].getRGB()& 0x00ff0000) >> 16)-min)*(255.0/(max-min)));
+               normalizedPix[i][j]=new Color(kol,kol,kol);
+       }
+        
+    }
     }
 
     // x1 , y1 - współrzędne początku odcinka
     // x2 , y2 - współrzędne końca odcinka
-    Color BresenhamLine(int x1, int y1, int x2, int y2, BufferedImage image) {
+    private Color BresenhamLine(int x1, int y1, int x2, int y2, BufferedImage image) {
         // zmienne pomocnicze
         int d, dx, dy, ai, bi, xi, yi;
         int x = x1, y = y1;
@@ -82,31 +120,12 @@ public class Sinogram {
             yi = -1;
             dy = y1 - y2;
         }
-        // pierwszy piksel
-        //zczytuje kolor piksela 
-        /* Color mycolor = new Color(image.getRGB(x, y));
-         suma += mycolor.getRed();
-         licznik++;
-         */
-        //   byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-        // int      argb = getRGB(x, y);
-        // argb = (((int) pixels[3] & 0xff) << 16); // red
-
-        /*
-         int[][] data = null ;
-         image.getData().getPixels(0,0,image.getWidth(),image.getHeight(),data[x]);   
-         */
-        // System.out.println("x " + x + " y " + y);
+        
         int pixels = image.getRGB(x, y);
         int red = (pixels & 0x00ff0000) >> 16;
-        //System.out.println(red);
         suma += red;
-        // System.out.println(suma);
-
         licznik++;
 
-        //image.getRGB(x, y);
-        // oś wiodąca OX
         if (dx > dy) {
             ai = (dy - dx) * 2;
             bi = dy * 2;
@@ -123,22 +142,11 @@ public class Sinogram {
                     x += xi;
                 }
 
-                //Color myc = image.getRaster().getPixel(x,y,doubles);
-                //Color collll = new Color(pixels);
-                //  pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-                /* argb = getRGB(x, y);
-                 //  argb = (((int) pixels[3] & 0xff) << 16); // red
-                 suma += argb;
-                 System.out.println(argb);
-                 */
-                // System.out.println("x " + x + " y " + y);
                 pixels = image.getRGB(x, y);
                 red = (pixels & 0x00ff0000) >> 16;
-                //  System.out.println(red);
                 suma += red;
-                //  System.out.println(suma);
-
                 licznik++;
+                
             }
         } // oś wiodąca OY
         else {
@@ -156,31 +164,15 @@ public class Sinogram {
                     d += bi;
                     y += yi;
                 }
-                //Color mycolor2 = new Color(image.getRGB(x, y));
-                //suma += mycolor2.getRed();
-
-                //   pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-                /*   argb = getRGB(x, y);
-                 // argb = (((int) pixels[3] & 0xff) << 16); // red
-                 suma += argb;
-                 System.out.println(argb);
-                 */
-                //  System.out.println("x " + x + " y " + y);
+                
                 pixels = image.getRGB(x, y);
-
                 red = (pixels & 0x00ff0000) >> 16;
-                //  System.out.println("red" + red);
                 suma += red;
-
-                //  System.out.println(suma);
                 licznik++;
+                
             }
         }
         int kol = suma / licznik;
-        //  System.out.println("koniec");
-        // System.out.println(suma);
-        // System.out.println(licznik);
-        //  System.out.println(kol);
         return new Color(kol, kol, kol);
     }
 
@@ -188,36 +180,28 @@ public class Sinogram {
         return emitersAmount;
     }
 
-    public void setEmitersAmount(int emitersAmount) {
-        this.emitersAmount = emitersAmount;
-    }
-
     public int getDetectorsAmount() {
         return detectorsAmount;
     }
 
-    public void setDetectorsAmount(int detectorsAmount) {
-        this.detectorsAmount = detectorsAmount;
-    }
-
-    public BufferedImage getBuf() {
-        return buf;
-    }
-
-    public Color[][] getPix() {
-        return pix;
-    }
-
-    public void setPix(Color[][] pix) {
-        this.pix = pix;
+    public BufferedImage getSinogram() {
+        return sinogram;
     }
 
     public int getAngle() {
         return angle;
     }
 
-    public void setAngle(int angle) {
-        this.angle = angle;
+    public Color[][] getNormalizedPix() {
+        return normalizedPix;
     }
-}
 
+    public int getRadious() {
+        return radious;
+    }
+
+    public int getPictureWidth() {
+        return pictureWidth;
+    }
+
+}
