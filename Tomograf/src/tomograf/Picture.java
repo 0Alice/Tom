@@ -49,8 +49,8 @@ public class Picture {
 
     BufferedImage bi;
 
-    public Picture() {
-        readIn(getClass().getResourceAsStream("obraz.bmp"));
+    public Picture(File file) {
+        readIn(getClass().getResourceAsStream(file.getName()));
         //tu trzeba zmienic na choosera
     }
 
