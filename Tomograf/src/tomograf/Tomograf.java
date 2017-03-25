@@ -2,6 +2,7 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+
  */
 package tomograf;
 
@@ -61,6 +62,7 @@ public class Tomograf extends Application {
     @Override
     public void start(Stage primaryStage) {
 slider1.setVisible(false);
+
         /**
          * Menu
          */
@@ -177,7 +179,8 @@ slider1.setVisible(false);
                 new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent e) {
-                file = fileChooser.showOpenDialog(primaryStage);
+                //file = fileChooser.showOpenDialog(primaryStage);
+                file=new File("D:\\Projekty\\tomograf\\Tomograf\\src\\tomograf\\obraz3.bmp");
                 if (file != null) {
                     System.out.println("srodek");
                     Picture picture = new Picture(file);
@@ -187,9 +190,11 @@ slider1.setVisible(false);
                     sinogram.fullProcess();
                     Image image2 = SwingFXUtils.toFXImage(sinogram.getSinogram(), null);
                     TomographyPicture tomografPic = new TomographyPicture(sinogram);
-                    tomografPic.fullProcess();
-                    //tomografPic.processing(sinogram.getEmitersAmount());
+                    //tomografPic.fullProcess();
+                    tomografPic.processing(sinogram.getEmitersAmount()/10);
                     Image image3 = SwingFXUtils.toFXImage(tomografPic.getBuf(), null);
+                    //Image image3 = SwingFXUtils.toFXImage(tomografPic.sploting(20), null);
+                    
 
                     /**
                      * Obrazy

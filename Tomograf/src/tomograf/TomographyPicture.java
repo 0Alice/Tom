@@ -8,7 +8,6 @@ package tomograf;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-
 /**
  *
  * @author Ania
@@ -19,35 +18,80 @@ public class TomographyPicture {
     private int[][][] endPix;//tablica sum kolorow skladajasych sie na piksel i ilosci tych skladowych
     private final int[][] pixColor;//kolor piksela w wynikowym obrazie przed normalizacja
     private Color[][] normalColor;//kolor piksela w wynikowym obrazie po normalizacji
-    private BufferedImage buf;
+    private BufferedImage buf;//wyniowy obraz
     private final int pictureWidth;
 
-    //private final BufferedImage sinogram;//sionogram
     private final int emitersAmount;//liczba emiterow
     private final int detectorsAmount;//liczba detektorow
     private final int angle;//kat rozwarcia stozka
     private final int radious;//promien okreku wpisanego w obraz
     private int processed;//liczba wykonanych iteracji
 
+    //private Color[][] normalSplotedColor;//kolor piksela w przefiltrowanym obrazie po normalizacji
+    //private BufferedImage splotedBuf;//wyniowy obraz przefiltrowany
     public TomographyPicture(Sinogram sinogram) {
         this.angle = sinogram.getAngle();
         emitersAmount = sinogram.getEmitersAmount();
         detectorsAmount = sinogram.getDetectorsAmount();
         pictureWidth = sinogram.getPictureWidth();
-        buf = new BufferedImage(pictureWidth,pictureWidth, BufferedImage.TYPE_BYTE_GRAY);
-        radious=sinogram.getRadious();
-        pixelsFromSinogram=sinogram.getNormalizedPix();
-        normalColor= new Color[pictureWidth][pictureWidth];
-        pixColor= new int[pictureWidth][pictureWidth];
+        buf = new BufferedImage(pictureWidth, pictureWidth, BufferedImage.TYPE_BYTE_GRAY);
+        radious = sinogram.getRadious();
+        pixelsFromSinogram = sinogram.getNormalizedPix();
+        normalColor = new Color[pictureWidth][pictureWidth];
+        pixColor = new int[pictureWidth][pictureWidth];
         //wysokosc na szerokosc na 2 (suma i licznik pikseli - bedziemy robili pozniej srednia)
         endPix = new int[pictureWidth][pictureWidth][2];
-        processed=0;
+        processed = 0;
     }
-    public void fullProcess(){
-    this.processing(emitersAmount);
+
+    public BufferedImage sploting(int k) {
+        //Color[][] normalSplotedColor= new Color[pictureWidth][pictureWidth];
+        int[][] splotingPix = new int[pictureWidth][pictureWidth];
+        for (int a = 0; a < pictureWidth; a++) {
+            for (int b = 0; b < pictureWidth; b++) {
+                for (int i = 0; i < k; i++) {
+                    for (int j = 0; j < k; j++) {
+                        if (i == 0 && j == 0) {
+                            splotingPix[a][b] = pixColor[a][b];
+                        } else {
+                            double factor = 4 / ((Math.PI * Math.PI) * ((i * i) + (j * j)));
+                            if (a + i < pictureWidth && b + j < pictureWidth) {
+                               // System.out.println(splotingPix[a][b]+"+"+pixColor[a + i][b + j]+"*"+factor);
+                                splotingPix[a][b] += pixColor[a + i][b + j] * factor;
+                                //System.out.println(splotingPix[a][b]);
+                            }
+                            if (a + i < pictureWidth && b - j >= 0) {
+                                splotingPix[a][b] += pixColor[a + i][b - j] * factor;
+                            }
+                            if (a - i >= 0 && b + j < pictureWidth) {
+                                splotingPix[a][b] += pixColor[a - i][b + j] * factor;
+                            }
+                            if (a - i >= 0 && b - j >= 0) {
+                                splotingPix[a][b] += pixColor[a - i][b - j] * factor;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        Color[][] normalSplotedColor = normalize(splotingPix);
+        BufferedImage splotingBuf = new BufferedImage(pictureWidth, pictureWidth, BufferedImage.TYPE_BYTE_GRAY);
+        for (int a = 0; a < pictureWidth; a++) {
+            for (int b = 0; b < pictureWidth; b++) {
+                Color col = normalSplotedColor[a][b];
+                splotingBuf.setRGB(a, b, col.getRGB());
+            }
+        }
+        return splotingBuf;
     }
-    public void processing(int iterations){
-            for (int i = processed; i < processed+iterations; i++) {
+
+    public void fullProcess() {
+        this.processing(emitersAmount);
+    }
+
+    public void processing(int iterations) {
+        for (int i = processed; i < processed + iterations; i++) {
             double help0 = i * Math.PI / 180;
             Double EmiterX = Math.cos(help0) * radious + radious;
             Double EmiterY = Math.sin(help0) * (-radious) + radious;
@@ -58,8 +102,8 @@ public class TomographyPicture {
                 BresenhamLine(EmiterX.intValue(), EmiterY.intValue(), DetektorX.intValue(), DetektorY.intValue(), pixelsFromSinogram[i][j]);
             }
         }
-        processed+=iterations;
-        
+        processed += iterations;
+
         for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {
                 pixColor[i][j] = 0;
@@ -69,8 +113,9 @@ public class TomographyPicture {
             }
 
         }
-        //equalization();
-        normalize();
+        
+        normalColor = normalize(pixColor);
+        equalization();
         
         for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {
@@ -80,27 +125,29 @@ public class TomographyPicture {
         }
     }
 
-        private void normalize(){
-        int max=0;
-        int min=255;
+    private Color[][] normalize(int[][] innerColor) {
+        int max = 0;
+        int min = 255;
         for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {
-                int pixelColor=pixColor[i][j];
-                if(pixelColor>max){
-                    max=pixelColor;
+                int pixelColor = innerColor[i][j];
+                if (pixelColor > max) {
+                    max = pixelColor;
                 }
-                if(pixelColor<min){//&&e!=0){
-                    min=pixelColor;
+                if (pixelColor < min) {//&&e!=0){
+                    min = pixelColor;
                 }
             }
         }
-         for (int i = 0; i < pictureWidth; i++) {
+        Color[][] resultColor = new Color[pictureWidth][pictureWidth];
+        for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {
-               int kol=(int)((pixColor[i][j]-min)*(255.0/(max-min)));
-               normalColor[i][j]=new Color(kol,kol,kol);
-       }
-        
-    }
+                int kol = (int) ((innerColor[i][j] - min) * (255.0 / (max - min)));
+                resultColor[i][j] = new Color(kol, kol, kol);
+            }
+        }
+        return resultColor;
+
     }
 
     private void equalization() {
@@ -115,7 +162,10 @@ public class TomographyPicture {
         }
         for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {
-                gray[normalColor[i][j].getRed()]++;
+                try{
+                gray[normalColor[i][j].getRed()]++;}catch(java.lang.NullPointerException e){
+                    normalColor[i][j]=new Color(0,0,0);
+                }
             }
         }
         for (int i = 0; i < 256; i++) {
@@ -130,19 +180,19 @@ public class TomographyPicture {
         int z = 0;
         //System.out.println(dGray[z]);
         while (dGray[z] == 0) {
-          //  System.out.println(dGray[z]);
+            //  System.out.println(dGray[z]);
             z++;
         }
         //System.out.println(z);
         D0min = dGray[z];
         for (int i = 0; i < 256; i++) {
-            lut[i] =(int) (((dGray[i] - D0min) / (1 - D0min)) * (256 - 1));
-          //  System.out.println(i+" "+lut[i]);
+            lut[i] = (int) (((dGray[i] - D0min) / (1 - D0min)) * (256 - 1));
+            //  System.out.println(i+" "+lut[i]);
         }
         for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {
-                int kol=lut[normalColor[i][j].getRed()];
-                normalColor[i][j]=new Color(kol,kol,kol);
+                int kol = lut[normalColor[i][j].getRed()];
+                normalColor[i][j] = new Color(kol, kol, kol);
             }
         }
 
@@ -170,7 +220,7 @@ public class TomographyPicture {
             yi = -1;
             dy = y1 - y2;
         }
-        
+
         endPix[x][y][0] += add.getRed();
         endPix[x][y][1]++;
 

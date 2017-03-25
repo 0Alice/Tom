@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
  */
 public class Sinogram {
 
-    private final Color[][] pix;//kolor piksela w sinogramie przed normalizacja
+    private int[][] pix;//kolor piksela w sinogramie przed normalizacja
     private Color[][] normalizedPix;//kolor piksela w sionogramie po normalizacji
     private BufferedImage sinogram;//wynikowy obraz (sionogram)
     private final BufferedImage originalPicture;//wejsciowy obraz (musi byc w kwadracie)
@@ -41,7 +41,7 @@ public class Sinogram {
         pictureWidth = img.getBi().getWidth();
         radious = (pictureWidth / 2) - 5;
         originalPicture = img.getBi();
-        pix = new Color[emitersAmount][detectorsAmount];
+        pix = new int[emitersAmount][detectorsAmount];
         normalizedPix = new Color[emitersAmount][detectorsAmount];
         processed=0;
         
@@ -60,6 +60,7 @@ public class Sinogram {
                 Double DetektorY = Math.sin(help) * (-radious) + radious;
                 pix[i][j] = BresenhamLine(EmiterX.intValue(), EmiterY.intValue(), DetektorX.intValue(), DetektorY.intValue(), originalPicture);
             }
+            sploting(i,10);
         }
         normalize(processed+iterations);
         for (int i = 0; i < processed+iterations; i++) {
@@ -69,7 +70,40 @@ public class Sinogram {
         }
         processed+=iterations;
     }
-
+    private void sploting(int row,int k){
+        for (int i = 0; i < detectorsAmount; i++) {
+            int newColor=pix[row][i];
+        for (int j = 1; j <= k; j++) {
+        double factor = -4 / ((Math.PI * Math.PI) * (j * j));
+        if(i-j>=0)
+            newColor+=pix[row][i-j]*factor;
+        if(i+j<detectorsAmount)
+            newColor+=pix[row][i+j]*factor;
+        }
+        pix[row][i]=newColor;
+        }
+        /*
+        int max=0;
+        int min=255;
+        for (int j = 0; j < detectorsAmount; j++) {
+                int pixelColor=0;
+                try{
+                pixelColor=pix[row][j];
+                }catch(java.lang.NullPointerException z){
+                pixelColor=0;
+                pix[row][j]=0;
+            }
+                if(pixelColor>max){
+                    max=pixelColor;
+                }
+                if(pixelColor<min){//&&e!=0){
+                    min=pixelColor;
+                }
+            }
+        for (int j = 0; j < detectorsAmount; j++) {
+               pix[row][j]=(int)((pix[row][j]-min)*(255.0/(max-min)));
+        }*/
+    }
         private void normalize(int iterations){
         int max=0;
         int min=255;
@@ -77,10 +111,10 @@ public class Sinogram {
             for (int j = 0; j < detectorsAmount; j++) {
                 int pixelColor=0;
                 try{
-                pixelColor=(pix[i][j].getRGB()& 0x00ff0000) >> 16;
+                pixelColor=pix[i][j];
                 }catch(java.lang.NullPointerException z){
                 pixelColor=0;
-                pix[i][j]=new Color(0,0,0);
+                pix[i][j]=0;
             }
                 if(pixelColor>max){
                     max=pixelColor;
@@ -92,7 +126,7 @@ public class Sinogram {
         }
          for (int i = 0; i < iterations; i++) {
             for (int j = 0; j < detectorsAmount; j++) {
-               int kol=(int)((((pix[i][j].getRGB()& 0x00ff0000) >> 16)-min)*(255.0/(max-min)));
+               int kol=(int)((pix[i][j]-min)*(255.0/(max-min)));
                normalizedPix[i][j]=new Color(kol,kol,kol);
        }
         
@@ -101,7 +135,7 @@ public class Sinogram {
 
     // x1 , y1 - współrzędne początku odcinka
     // x2 , y2 - współrzędne końca odcinka
-    private Color BresenhamLine(int x1, int y1, int x2, int y2, BufferedImage image) {
+    private int BresenhamLine(int x1, int y1, int x2, int y2, BufferedImage image) {
         // zmienne pomocnicze
         int d, dx, dy, ai, bi, xi, yi;
         int x = x1, y = y1;
@@ -176,7 +210,7 @@ public class Sinogram {
             }
         }
         int kol = suma / licznik;
-        return new Color(kol, kol, kol);
+        return kol;
     }
 
     public int getEmitersAmount() {
