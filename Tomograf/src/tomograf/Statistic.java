@@ -57,9 +57,9 @@ public class Statistic {
         avgEmiters=(minemiters+maxemiters)/2;
         maxK=k;
         meanSquaredErrorOnIterations=iterationsFunction();
-        /*for(int i=0;i<100;i++){
+        for(int i=0;i<100;i++){
             System.out.println("f("+meanSquaredErrorOnIterations[0][i]+")="+meanSquaredErrorOnIterations[1][i]);
-        }*/
+        }
         //meanSquaredErrorOnAngle
         
     }
