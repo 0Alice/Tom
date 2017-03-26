@@ -38,6 +38,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import static java.lang.Math.pow;
+import javafx.scene.Group;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 
 /**
  *
@@ -80,6 +83,7 @@ public class Tomograf extends Application {
      */
     int sceneHeight = 500;
     
+     final ScrollBar sc = new ScrollBar();
     TilePane tile = new TilePane();
     File file;
     VBox vb = new VBox();
@@ -91,7 +95,7 @@ public class Tomograf extends Application {
      ImageView iw3;
  ImageView iw2;
     Sinogram sinogram;
-    
+       ScrollPane scrollPane;
     @Override
     public void start(Stage primaryStage) {
 slider1.setVisible(false);
@@ -114,6 +118,7 @@ slider1.setVisible(false);
         Label label2 = new Label("Obraz końcowy");
         label1.fontProperty().set(Font.font(20));
         label2.fontProperty().set(Font.font(20));
+        
         Slider slider = new Slider();
         slider.setOrientation(Orientation.HORIZONTAL);
         slider.setMax(emiters);
@@ -122,8 +127,8 @@ slider1.setVisible(false);
         slider.setMinorTickCount(0);
         slider.setShowTickMarks(true);
         slider.setShowTickLabels(true);
-    
-    //    slider.setMinSize(100, 10);
+   // slider.setMaxSize(600, 10);
+   slider.setMinSize(10, 10);
         //
         slider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
 
@@ -311,14 +316,19 @@ slider1.setVisible(false);
                     tile.getChildren().add(iw1);
                      //   iw1.fitWidthProperty().bind(primaryStage.widthProperty()); 
                    //                             iw1.fitWidthProperty().bind(primaryStage.maxWidthProperty().add(400)); 
+    
                    pane.setCenter(tile);
                     System.out.println("drugi");
                 }
             }
         });
         if (file == null) {
-            
+                           
+   
             pane = new BorderPane(null, null, null, vb, null);
+                            
+scrollPane = new ScrollPane(pane);
+    scrollPane.setFitToHeight(true);
             System.out.println("pierwszy");
         } else {
             
@@ -326,8 +336,17 @@ slider1.setVisible(false);
         pane.setTop(vb4);
         pane.setBottom(vb);
         pane.setPadding(new Insets(0, 0, 35, 0));
+      //   Group group = new Group(sc,pane);
+      
         
-        Scene scene = new Scene(pane, sceneWidth, sceneHeight);
+        sc.setOrientation(Orientation.VERTICAL);
+      sc.setMinHeight(sceneHeight);
+      
+      
+        Scene scene = new Scene(scrollPane, sceneWidth, sceneHeight);
+     
+     // sc.set
+        
         
         primaryStage.setMinWidth(400);
         primaryStage.setMinHeight(400);
