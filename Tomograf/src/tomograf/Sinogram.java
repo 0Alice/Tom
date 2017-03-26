@@ -87,14 +87,17 @@ public class Sinogram {
 
     /**
      *
-     * @param iterations liczba iteracji które ma jeszcze wykonać algorytm
+     * @param iterations liczba iteracji do których ma się wykonać algorytm
      * @param kForSplot jest parametrem k we wzorze na splot
      */
     public void processing(int iterations, int kForSplot) {
-        if (processed + iterations >= emitersAmount) {
-            iterations = emitersAmount - processed;
+        if (iterations >= emitersAmount) {
+            iterations = emitersAmount;
         }
-        for (int i = processed; i < processed + iterations; i++) {
+        if(iterations<processed){
+            iterations =processed;
+        }
+        for (int i = processed; i <iterations; i++) {
             double help0 = i * Math.PI / 180;
             Double EmiterX = Math.cos(help0) * radious + radious;
             Double EmiterY = Math.sin(help0) * (-radious) + radious;
@@ -106,14 +109,14 @@ public class Sinogram {
             }
             sploting(i, kForSplot);
         }
-        normalize(processed + iterations);
+        normalize(iterations);
         /*
         for (int i = 0; i < processed + iterations; i++) {
             for (int j = 0; j < detectorsAmount; j++) {
                 sinogram.setRGB(i, j, normalizedPix[i][j].getRGB());
             }
         }*/
-        processed += iterations;
+        processed = iterations;
     }
     public void makeResoultPicture(){
         for (int i = 0; i < processed; i++) {

@@ -45,10 +45,13 @@ public class TomographyPicture {
     }
 
     public void processing(int iterations) {
-        if(processed+iterations>=emitersAmount){
-            iterations=emitersAmount-processed;
+        if (iterations >= emitersAmount) {
+            iterations = emitersAmount;
         }
-        for (int i = processed; i < processed + iterations; i++) {
+        if(iterations<processed){
+            iterations =processed;
+        }
+        for (int i = processed; i < iterations; i++) {
             double help0 = i * Math.PI / 180;
             Double EmiterX = Math.cos(help0) * radious + radious;
             Double EmiterY = Math.sin(help0) * (-radious) + radious;
@@ -59,7 +62,7 @@ public class TomographyPicture {
                 BresenhamLine(EmiterX.intValue(), EmiterY.intValue(), DetektorX.intValue(), DetektorY.intValue(), pixelsFromSinogram[i][j]);
             }
         }
-        processed += iterations;
+        processed = iterations;
 
         for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {

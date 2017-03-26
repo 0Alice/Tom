@@ -23,10 +23,45 @@ public class Statistic {
     public Sinogram(Picture img, int angle, int detecotrs, int emiters) {*/
     private final int pictureWidth;
     private final Picture originalPicture;
+    private final int avgAngle;
+    private final int avgDetecors;
+    private final int avgEmiters;
+    private final int maxK;
+    /**
+     * błąd średniokwadratowy w funkcji iteracji kolejnych wierszy z sinogramu
+     */
+    private final double[][] meanSquaredErrorOnIterations;
+   /**
+     * błąd średniokwadratowy w funkcji konta rozwarcia stożka
+     */
+    //private final double[][] meanSquaredErrorOnAngle;
     
-    public Statistic(Picture img, int minangle,int maxangle, int mindetecotrs,int maxdetecotrs,int minemiters,int maxemiters){
+    /**
+     * błąd średniokwadratowy w funkcji liczby detektorów
+     */
+    //private final double[][] meanSquaredErrorOnDetectors;
+    /**
+     * błąd średniokwadratowy w funkcji liczby emiterów
+     */
+    //private final double[][] meanSquaredErrorOnEmiters;
+    /**
+     * błąd średniokwadratowy w zalenosci od zastosowania Splotu i parametru k
+     */
+    //private final double[][] meanSquaredErrorOnSplot;
+    
+    public Statistic(Picture img, int minangle,int maxangle, int mindetecotrs,int maxdetecotrs,int minemiters,int maxemiters,int k){
         pictureWidth = img.getBi().getWidth();
         originalPicture=img;
+        avgAngle=(minangle+maxangle)/2;
+        avgDetecors=(mindetecotrs+maxdetecotrs)/2;
+        avgEmiters=(minemiters+maxemiters)/2;
+        maxK=k;
+        meanSquaredErrorOnIterations=iterationsFunction();
+        /*for(int i=0;i<100;i++){
+            System.out.println("f("+meanSquaredErrorOnIterations[0][i]+")="+meanSquaredErrorOnIterations[1][i]);
+        }*/
+        //meanSquaredErrorOnAngle
+        
     }
     /**
      * 
@@ -35,11 +70,16 @@ public class Statistic {
      * @param emiters
      * @return [0/1] 0-nr iteracji , 1 - wartosci bledu sredniokwadratowego
      */
-    private double[][] iterationsFunction(int angle, int detecotrs, int emiters){
+    private double[][] iterationsFunction(){
+        Sinogram sinogram = new Sinogram(originalPicture, avgAngle,avgDetecors, avgEmiters);
+        sinogram.fullProcess(maxK);
+        TomographyPicture tomografPic = new TomographyPicture(sinogram);
         double [][] resoult = new double[2][100];
-        int step = emiters/100;
+        int step = avgEmiters/100;
         for(int i=0;i<100;i++){
-            
+            tomografPic.processing(i*step);
+            resoult[0][i]=i*step;
+            resoult[1][i]=meanSquaredError(originalPicture.getColorsOfPixels(),tomografPic.getColorsOfPixels());
         }
         return resoult;
     }
