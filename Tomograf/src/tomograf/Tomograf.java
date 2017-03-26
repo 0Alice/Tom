@@ -73,12 +73,12 @@ public class Tomograf extends Application {
     /**
      * Szerokość okienka
      */
-    int sceneWidth = 1500;
+    int sceneWidth = 1000;
 
     /**
      * Wysokość okienka
      */
-    int sceneHeight = 800;
+    int sceneHeight = 500;
     
     TilePane tile = new TilePane();
     File file;
@@ -122,7 +122,8 @@ slider1.setVisible(false);
         slider.setMinorTickCount(0);
         slider.setShowTickMarks(true);
         slider.setShowTickLabels(true);
-        slider.setMinSize(500, 10);
+    
+    //    slider.setMinSize(100, 10);
         //
         slider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
 
@@ -171,8 +172,9 @@ slider1.setVisible(false);
         slider1.setShowTickLabels(true);
         slider1.showTickMarksProperty();
         slider1.setSnapToTicks(true);
-        slider1.setMinSize(500, 10);
+       // slider1.setMinSize(100, 10);
         slider1.setOrientation(Orientation.HORIZONTAL);
+        slider1.resize(100, 10);
         //domyslna wartosc
         //slider1.adjustValue(10.0);
         slider1.valueProperty().addListener((observable, oldvalue, newvalue) -> {
@@ -302,10 +304,13 @@ slider1.setVisible(false);
                     tile.setHgap(20);
                     
                     ImageView iw1 = new ImageView(image1);
+                    
+
                     iw1.setFitHeight(400);
                     iw1.setFitWidth(400);
                     tile.getChildren().add(iw1);
-                    
+                     //   iw1.fitWidthProperty().bind(primaryStage.widthProperty()); 
+                   //                             iw1.fitWidthProperty().bind(primaryStage.maxWidthProperty().add(400)); 
                    pane.setCenter(tile);
                     System.out.println("drugi");
                 }
@@ -324,8 +329,11 @@ slider1.setVisible(false);
         
         Scene scene = new Scene(pane, sceneWidth, sceneHeight);
         
+        primaryStage.setMinWidth(400);
+        primaryStage.setMinHeight(400);
         primaryStage.setTitle("Tomograf");
         primaryStage.setScene(scene);
+        primaryStage.setResizable(true);
         primaryStage.show();
     }
 
