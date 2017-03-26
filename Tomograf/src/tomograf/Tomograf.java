@@ -6,6 +6,7 @@
  */
 package tomograf;
 
+import java.awt.Color;
 import javafx.scene.control.Label;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -36,6 +37,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
+import static java.lang.Math.pow;
 
 /**
  *
@@ -185,17 +187,18 @@ slider1.setVisible(false);
                     System.out.println("srodek");
                     Picture picture = new Picture(file);
                     Image image1 = SwingFXUtils.toFXImage(picture.getBi(), null);
-                    Sinogram sinogram = new Sinogram(picture, 180, 200, 1000);
+                    Sinogram sinogram = new Sinogram(picture, 360, 500, 500);
                     //sinogram.processing(sinogram.getEmitersAmount()+10,10);
-                    sinogram.fullProcess(10);
+                    sinogram.fullProcess(12);
                     Image image2 = SwingFXUtils.toFXImage(sinogram.getSinogram(), null);
                     TomographyPicture tomografPic = new TomographyPicture(sinogram);
-                    tomografPic.fullProcess();
+                    //tomografPic.fullProcess();
                     //tomografPic.processing(sinogram.getEmitersAmount()+10);
-                    Image image3 = SwingFXUtils.toFXImage(tomografPic.getBuf(), null);
+                    Image image3 = SwingFXUtils.toFXImage(tomografPic.makeAndReturnFullResoultPicture(), null);
                     //Image image3 = SwingFXUtils.toFXImage(tomografPic.sploting(20), null);
-                    
-
+                    double bladSrednioKwadratowy=Statistic.meanSquaredError(picture.getColorsOfPixels(),tomografPic.getColorsOfPixels());
+                    double pierw=pow(bladSrednioKwadratowy,0.5);
+                    System.out.println(bladSrednioKwadratowy+" po spierwiastowaniu "+pierw);
                     /**
                      * Obrazy
                      */

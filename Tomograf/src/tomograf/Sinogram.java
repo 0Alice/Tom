@@ -138,7 +138,7 @@ public class Sinogram {
                 if(pixelColor>max){
                     max=pixelColor;
                 }
-                if(pixelColor<min){//&&e!=0){
+                if(pixelColor<min){
                     min=pixelColor;
                 }
             }

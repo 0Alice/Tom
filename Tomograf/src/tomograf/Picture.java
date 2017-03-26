@@ -70,9 +70,17 @@ public class Picture {
     public BufferedImage getBi() {
         return bi;
     }
-
-    public void setBi(BufferedImage bi) {
-        this.bi = bi;
+     public Color[][] getColorsOfPixels() {
+        int pictureWidth = bi.getWidth();
+        Color[][] resultColor = new Color[pictureWidth][pictureWidth];
+        for (int i = 0; i < pictureWidth; i++) {
+            for (int j = 0; j < pictureWidth; j++) {
+                int pixels = bi.getRGB(i, j);
+                int red = (pixels & 0x00ff0000) >> 16;
+                resultColor[i][j] = new Color(red,red,red);
+            }
+        }
+        return resultColor;
     }
 
 }
