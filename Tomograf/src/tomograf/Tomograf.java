@@ -79,22 +79,22 @@ public class Tomograf extends Application {
      * Wysokość okienka
      */
     int sceneHeight = 800;
-
+    
     TilePane tile = new TilePane();
     File file;
     VBox vb = new VBox();
     BorderPane pane;
-    Slider slider1 = new Slider();
+       Slider slider1 = new Slider();
     Image image2;
     TomographyPicture tomografPic;
     Image image3;
      ImageView iw3;
  ImageView iw2;
     Sinogram sinogram;
-
+    
     @Override
     public void start(Stage primaryStage) {
-        slider1.setVisible(false);
+slider1.setVisible(false);
 
         /**
          * Menu
@@ -125,6 +125,7 @@ public class Tomograf extends Application {
         slider.setMinSize(500, 10);
         //
         slider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
+
             sliderSinogramValue = newvalue.intValue();
            // sinogram.fullProcess(12);
             sinogram.processing(sliderSinogramValue, 12);
@@ -150,6 +151,7 @@ public class Tomograf extends Application {
             if (sliderSinogramValue == slider.getMax()) {
 
                 slider1.setVisible(true);
+ 
                 tomografPic = new TomographyPicture(sinogram);
                 //tomografPic.fullProcess();
                 //tomografPic.processing(sinogram.getEmitersAmount()+10);
@@ -159,8 +161,9 @@ public class Tomograf extends Application {
             }
         });
 //
-
+     
         slider1.setMin(0);
+
         slider1.setMax(emiters);
         slider1.setMajorTickUnit(emiters / 10);
         slider1.setMinorTickCount(0);
@@ -173,6 +176,7 @@ public class Tomograf extends Application {
         //domyslna wartosc
         //slider1.adjustValue(10.0);
         slider1.valueProperty().addListener((observable, oldvalue, newvalue) -> {
+  
              
             
             sliderPictureValue = newvalue.intValue();
@@ -188,12 +192,12 @@ public class Tomograf extends Application {
             // pane.setCenter(tile);
             
         });
-
+        
         vb.setSpacing(20);
         vb.setPadding(new Insets(20, 30, 20, 30));
         vb.getChildren().add(label1);
         vb.getChildren().add(slider);
-
+        
         vb.getChildren().add(label2);
         vb.getChildren().add(slider1);
 
@@ -202,21 +206,25 @@ public class Tomograf extends Application {
          */
         Label l1 = new Label("Ilość emiterów");
         l1.fontProperty().set(Font.font(15));
+        
         TextField tf1 = new TextField("500");
         VBox vb1 = new VBox(l1, tf1);
         vb1.setSpacing(10);
-
+        
         Label l2 = new Label("Ilość detektorów");
         l2.fontProperty().set(Font.font(15));
+   
         TextField tf2 = new TextField("500");
         VBox vb2 = new VBox(l2, tf2);
         vb2.setSpacing(10);
-
+        
         Label l3 = new Label("Kąt (stopnie)");
         l3.fontProperty().set(Font.font(15));
+  
         TextField tf3 = new TextField("360");
         VBox vb3 = new VBox(l3, tf3);
         vb3.setSpacing(10);
+        
 
         Button bt1 = new Button("Zapisz");
         bt1.fontProperty().set(Font.font(15));
@@ -256,31 +264,35 @@ public class Tomograf extends Application {
          * Wybieranie pliku
          */
         FileChooser fileChooser = new FileChooser();
-
+        
         item.setOnAction(
                 new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent e) {
-                file = fileChooser.showOpenDialog(primaryStage);
-                //file = new File("D:\\Projekty\\tomograf\\Tomograf\\src\\tomograf\\obraz3.bmp");
+                file=new File("D:\\Projekty\\tomograf\\Tomograf\\src\\tomograf\\obraz3.bmp");
                 if (file != null) {
                     System.out.println("srodek");
                     Picture picture = new Picture(file);
                     Image image1 = SwingFXUtils.toFXImage(picture.getBi(), null);
+                    
 
                     sinogram = new Sinogram(picture, angle, detectors, emiters);
                     //sinogram.processing(sinogram.getEmitersAmount()+10,10);
                     //sinogram.makeResoultPicture();
+                  
                     // sinogram.fullProcess(12);
                     //  Image image2 = SwingFXUtils.toFXImage(sinogram.getSinogram(), null);
                     //     TomographyPicture tomografPic = new TomographyPicture(sinogram);
                     //tomografPic.fullProcess();
                     //tomografPic.processing(sinogram.getEmitersAmount()+10);
+           
                     //    Image image3 = SwingFXUtils.toFXImage(tomografPic.makeAndReturnFullResoultPicture(), null);
                     //Image image3 = SwingFXUtils.toFXImage(tomografPic.sploting(20), null);
+                   
 //                    double bladSrednioKwadratowy = Statistic.meanSquaredError(picture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
                     //     double pierw = pow(bladSrednioKwadratowy, 0.5);
                     //     System.out.println(bladSrednioKwadratowy + " po spierwiastowaniu " + pierw);
+                    Statistic stat= new Statistic(picture, 180,360, 300,500,400,500,12);
                     /**
                      * Obrazy
                      */
@@ -288,30 +300,30 @@ public class Tomograf extends Application {
                     tile.setPrefColumns(1);
                     tile.setAlignment(Pos.CENTER);
                     tile.setHgap(20);
-
+                    
                     ImageView iw1 = new ImageView(image1);
                     iw1.setFitHeight(400);
                     iw1.setFitWidth(400);
                     tile.getChildren().add(iw1);
-
-                    pane.setCenter(tile);
+                    
+                   pane.setCenter(tile);
                     System.out.println("drugi");
                 }
             }
         });
         if (file == null) {
-
+            
             pane = new BorderPane(null, null, null, vb, null);
             System.out.println("pierwszy");
         } else {
-
+            
         }
         pane.setTop(vb4);
         pane.setBottom(vb);
         pane.setPadding(new Insets(0, 0, 35, 0));
-
+        
         Scene scene = new Scene(pane, sceneWidth, sceneHeight);
-
+        
         primaryStage.setTitle("Tomograf");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -323,5 +335,5 @@ public class Tomograf extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
+    
 }
