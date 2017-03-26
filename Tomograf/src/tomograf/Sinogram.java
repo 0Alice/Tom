@@ -13,22 +13,50 @@ import java.awt.image.BufferedImage;
  * @author Ania
  */
 public class Sinogram {
-
-    private int[][] pix;//kolor piksela w sinogramie przed normalizacja
-    private Color[][] normalizedPix;//kolor piksela w sionogramie po normalizacji
-    private BufferedImage sinogram;//wynikowy obraz (sionogram)
-    private final BufferedImage originalPicture;//wejsciowy obraz (musi byc w kwadracie)
-    private int processed;//liczba wykonanych iteracji
-
-    private final int emitersAmount;//liczba emiterow
-    private final int detectorsAmount;//liczba detektorow
-    private final int angle;//kat rozwarcia stozka
-    private final int radious;//promien okreku wpisanego w obraz
-    private final int pictureWidth;//szerokosc wejsciowego obrazu
+    /**
+     * kolor piksela w sinogramie przed normalizacja
+     */
+    private int[][] pix;
+    /**
+     * kolor piksela w sionogramie po normalizacji
+     */
+    private Color[][] normalizedPix;
+    /**
+     * wynikowy obraz (sionogram)
+     */
+    private BufferedImage sinogram;
+    /**
+     * wejsciowy obraz (musi byc w kwadracie)
+     */
+    private final BufferedImage originalPicture;
+    /**
+     * liczba wykonanych iteracji
+     */
+    private int processed;
+    /**
+     * liczba emiterow
+     */
+    private final int emitersAmount;
+    /**
+     * liczba detektorow
+     */
+    private final int detectorsAmount;
+    /**
+     * kat rozwarcia stozka
+     */
+    private final int angle;
+    /**
+     * promien okreku wpisanego w obraz
+     */
+    private final int radious;
+    /**
+     * szerokosc wejsciowego obrazu
+     */
+    private final int pictureWidth;
 
     /**
      *
-     * @param img Obrazek
+     * @param img Obrazek wejsciowy
      * @param angle kąt rozwarcia stożka
      * @param detecotrs liczba detektorów
      * @param emiters liczba emiterów
@@ -46,10 +74,22 @@ public class Sinogram {
         processed=0;
         
     }
-    public void fullProcess(){
-    this.processing(emitersAmount);
+    /**
+     * 
+     * @param kForSplot jest parametrem k we wzorze na splot
+     */
+    public void fullProcess(int kForSplot){
+    this.processing(emitersAmount,kForSplot);
     }
-    public void processing(int iterations){
+    /**
+     * 
+     * @param iterations liczba iteracji które ma jeszcze wykonać algorytm
+     * @param kForSplot jest parametrem k we wzorze na splot
+     */
+    public void processing(int iterations, int kForSplot){
+        if(processed+iterations>=emitersAmount){
+            iterations=emitersAmount-processed;
+        }
         for (int i = processed; i < processed+iterations; i++) {
             double help0 = i * Math.PI / 180;
             Double EmiterX = Math.cos(help0) * radious + radious;
@@ -60,7 +100,7 @@ public class Sinogram {
                 Double DetektorY = Math.sin(help) * (-radious) + radious;
                 pix[i][j] = BresenhamLine(EmiterX.intValue(), EmiterY.intValue(), DetektorX.intValue(), DetektorY.intValue(), originalPicture);
             }
-            sploting(i,10);
+            sploting(i,kForSplot);
         }
         normalize(processed+iterations);
         for (int i = 0; i < processed+iterations; i++) {
@@ -82,27 +122,6 @@ public class Sinogram {
         }
         pix[row][i]=newColor;
         }
-        /*
-        int max=0;
-        int min=255;
-        for (int j = 0; j < detectorsAmount; j++) {
-                int pixelColor=0;
-                try{
-                pixelColor=pix[row][j];
-                }catch(java.lang.NullPointerException z){
-                pixelColor=0;
-                pix[row][j]=0;
-            }
-                if(pixelColor>max){
-                    max=pixelColor;
-                }
-                if(pixelColor<min){//&&e!=0){
-                    min=pixelColor;
-                }
-            }
-        for (int j = 0; j < detectorsAmount; j++) {
-               pix[row][j]=(int)((pix[row][j]-min)*(255.0/(max-min)));
-        }*/
     }
         private void normalize(int iterations){
         int max=0;

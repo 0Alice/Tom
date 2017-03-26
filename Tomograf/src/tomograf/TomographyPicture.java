@@ -91,6 +91,9 @@ public class TomographyPicture {
     }
 
     public void processing(int iterations) {
+        if(processed+iterations>=emitersAmount){
+            iterations=emitersAmount-processed;
+        }
         for (int i = processed; i < processed + iterations; i++) {
             double help0 = i * Math.PI / 180;
             Double EmiterX = Math.cos(help0) * radious + radious;
@@ -115,7 +118,7 @@ public class TomographyPicture {
         }
         
         normalColor = normalize(pixColor);
-        equalization();
+        //equalization();
         
         for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {
@@ -134,7 +137,7 @@ public class TomographyPicture {
                 if (pixelColor > max) {
                     max = pixelColor;
                 }
-                if (pixelColor < min) {//&&e!=0){
+                if (pixelColor < min&&pixelColor!=0){
                     min = pixelColor;
                 }
             }
@@ -143,6 +146,7 @@ public class TomographyPicture {
         for (int i = 0; i < pictureWidth; i++) {
             for (int j = 0; j < pictureWidth; j++) {
                 int kol = (int) ((innerColor[i][j] - min) * (255.0 / (max - min)));
+                if(kol<0)kol=0;
                 resultColor[i][j] = new Color(kol, kol, kol);
             }
         }

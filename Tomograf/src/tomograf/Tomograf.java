@@ -186,12 +186,12 @@ slider1.setVisible(false);
                     Picture picture = new Picture(file);
                     Image image1 = SwingFXUtils.toFXImage(picture.getBi(), null);
                     Sinogram sinogram = new Sinogram(picture, 180, 200, 1000);
-                    //sinogram.processing(sinogram.getEmitersAmount());
-                    sinogram.fullProcess();
+                    sinogram.processing(sinogram.getEmitersAmount()+10,10);
+                    //sinogram.fullProcess(10);
                     Image image2 = SwingFXUtils.toFXImage(sinogram.getSinogram(), null);
                     TomographyPicture tomografPic = new TomographyPicture(sinogram);
                     //tomografPic.fullProcess();
-                    tomografPic.processing(sinogram.getEmitersAmount()/10);
+                    tomografPic.processing(sinogram.getEmitersAmount()+10);
                     Image image3 = SwingFXUtils.toFXImage(tomografPic.getBuf(), null);
                     //Image image3 = SwingFXUtils.toFXImage(tomografPic.sploting(20), null);
                     
