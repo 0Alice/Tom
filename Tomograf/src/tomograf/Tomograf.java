@@ -128,7 +128,7 @@ slider1.setVisible(false);
 
             sliderSinogramValue = newvalue.intValue();
            // sinogram.fullProcess(12);
-            sinogram.processing(sliderSinogramValue, 12);
+            sinogram.processing(sliderSinogramValue, 16);
             sinogram.makeResoultPicture();
 /**
              tile.getChildren().clear();
@@ -292,7 +292,7 @@ slider1.setVisible(false);
 //                    double bladSrednioKwadratowy = Statistic.meanSquaredError(picture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
                     //     double pierw = pow(bladSrednioKwadratowy, 0.5);
                     //     System.out.println(bladSrednioKwadratowy + " po spierwiastowaniu " + pierw);
-                    Statistic stat= new Statistic(picture, 180,360, 300,500,400,500,12);
+                    Statistic stat= new Statistic(picture, 180,360, 300,500,400,500,20);
                     /**
                      * Obrazy
                      */

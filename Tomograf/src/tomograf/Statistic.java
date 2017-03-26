@@ -13,7 +13,8 @@ import static java.lang.Math.pow;
  * @author geral_000
  */
 public class Statistic {
-        /*
+
+    /*
      *
      * @param img Obrazek wejsciowy
      * @param angle kąt rozwarcia stożka
@@ -24,81 +25,177 @@ public class Statistic {
     private final int pictureWidth;
     private final Picture originalPicture;
     private final int avgAngle;
-    private final int avgDetecors;
+    private final int avgDetectors;
     private final int avgEmiters;
     private final int maxK;
     /**
      * błąd średniokwadratowy w funkcji iteracji kolejnych wierszy z sinogramu
      */
-    private final double[][] meanSquaredErrorOnIterations;
-   /**
+    private double[][] meanSquaredErrorOnIterations;
+    /**
      * błąd średniokwadratowy w funkcji konta rozwarcia stożka
      */
-    //private final double[][] meanSquaredErrorOnAngle;
-    
+    private double[][] meanSquaredErrorOnAngle;
+
     /**
      * błąd średniokwadratowy w funkcji liczby detektorów
      */
-    //private final double[][] meanSquaredErrorOnDetectors;
+    private double[][] meanSquaredErrorOnDetectors;
     /**
      * błąd średniokwadratowy w funkcji liczby emiterów
      */
-    //private final double[][] meanSquaredErrorOnEmiters;
+    private double[][] meanSquaredErrorOnEmiters;
     /**
      * błąd średniokwadratowy w zalenosci od zastosowania Splotu i parametru k
      */
-    //private final double[][] meanSquaredErrorOnSplot;
-    
-    public Statistic(Picture img, int minangle,int maxangle, int mindetecotrs,int maxdetecotrs,int minemiters,int maxemiters,int k){
+    private double[][] meanSquaredErrorOnSplot;
+
+    public Statistic(Picture img, int minangle, int maxangle, int mindetectors, int maxdetectors, int minemiters, int maxemiters, int k) {
         pictureWidth = img.getBi().getWidth();
-        originalPicture=img;
-        avgAngle=(minangle+maxangle)/2;
-        avgDetecors=(mindetecotrs+maxdetecotrs)/2;
-        avgEmiters=(minemiters+maxemiters)/2;
-        maxK=k;
-        meanSquaredErrorOnIterations=iterationsFunction();
-        for(int i=0;i<100;i++){
-            System.out.println("f("+meanSquaredErrorOnIterations[0][i]+")="+meanSquaredErrorOnIterations[1][i]);
-        }
-        //meanSquaredErrorOnAngle
+        originalPicture = img;
+        avgAngle = (minangle + maxangle) / 2;
+        avgDetectors = (mindetectors + maxdetectors) / 2;
+        avgEmiters = (minemiters + maxemiters) / 2;
+        maxK = k;
         
+        /*
+        int iterations = 50;
+        meanSquaredErrorOnIterations = iterationsFunction(iterations);
+        System.out.println("Funkcja iteracji");
+        for (int i = 0; i < iterations; i++) {
+            System.out.println("f(" + meanSquaredErrorOnIterations[0][i] + ")=" + meanSquaredErrorOnIterations[1][i]);
+        }
+        int angles = 11;
+        meanSquaredErrorOnAngle = anglesFunction(angles, minangle, maxangle);
+        System.out.println("Funkcja kata rozwarcia");
+        for (int i = 0; i < angles; i++) {
+            System.out.println("f(" + meanSquaredErrorOnAngle[0][i] + ")=" + meanSquaredErrorOnAngle[1][i]);
+        }
+        int detectors = 11;
+        meanSquaredErrorOnDetectors = detectorsFunction(detectors, mindetectors, maxdetectors);
+        System.out.println("Funkcja zaleznosci od liczby detektorów");
+        for (int i = 0; i < detectors; i++) {
+            System.out.println("f(" + meanSquaredErrorOnDetectors[0][i] + ")=" + meanSquaredErrorOnDetectors[1][i]);
+        }
+        int emiters = 11;
+        meanSquaredErrorOnEmiters = emitersFunction(emiters, minemiters, maxemiters);
+        System.out.println("Funkcja zaleznosci od liczby emiterów");
+        for (int i = 0; i < emiters; i++) {
+            System.out.println("f(" + meanSquaredErrorOnEmiters[0][i] + ")=" + meanSquaredErrorOnEmiters[1][i]);
+        }
+        meanSquaredErrorOnSplot = splotedFunction();
+        System.out.println("Funkcja zaleznosci od splotu");
+        for (int i = 0; i <= maxK; i++) {
+            System.out.println("f(" + meanSquaredErrorOnSplot[0][i] + ")=" + meanSquaredErrorOnSplot[1][i]);
+        }
+        */
     }
+
     /**
-     * 
-     * @param angle
-     * @param detecotrs
-     * @param emiters
+     *
      * @return [0/1] 0-nr iteracji , 1 - wartosci bledu sredniokwadratowego
      */
-    private double[][] iterationsFunction(){
-        Sinogram sinogram = new Sinogram(originalPicture, avgAngle,avgDetecors, avgEmiters);
+    private double[][] iterationsFunction(int n) {
+        Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, avgEmiters);
         sinogram.fullProcess(maxK);
         TomographyPicture tomografPic = new TomographyPicture(sinogram);
-        double [][] resoult = new double[2][100];
-        int step = avgEmiters/100;
-        for(int i=0;i<100;i++){
-            tomografPic.processing(i*step);
-            resoult[0][i]=i*step;
-            resoult[1][i]=meanSquaredError(originalPicture.getColorsOfPixels(),tomografPic.getColorsOfPixels());
+        double[][] resoult = new double[2][n];
+        int step = avgEmiters / (n - 1);
+        for (int i = 0; i < n; i++) {
+            tomografPic.processing(i * step);
+            resoult[0][i] = i * step;
+            resoult[1][i] = meanSquaredError(originalPicture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
         }
         return resoult;
     }
-    
+
     /**
-     * 
+     *
+     * @return [0/1] 0-nr iteracji , 1 - wartosci bledu sredniokwadratowego
+     */
+    private double[][] anglesFunction(int n, int minAngle, int maxAngle) {
+        double[][] resoult = new double[2][n];
+        int step = (maxAngle - minAngle) / (n - 1);
+        for (int i = 0; i < n; i++) {
+            Sinogram sinogram = new Sinogram(originalPicture, minAngle + step * i, avgDetectors, avgEmiters);
+            sinogram.fullProcess(maxK);
+            TomographyPicture tomografPic = new TomographyPicture(sinogram);
+            tomografPic.fullProcess();
+            resoult[0][i] = minAngle + step * i;
+            resoult[1][i] = meanSquaredError(originalPicture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
+        }
+        return resoult;
+    }
+
+    /**
+     *
+     * @return [0/1] 0-nr iteracji , 1 - wartosci bledu sredniokwadratowego
+     */
+    private double[][] detectorsFunction(int n, int minDetectors, int maxDetectors) {
+        double[][] resoult = new double[2][n];
+        int step = (maxDetectors - minDetectors) / (n - 1);
+        for (int i = 0; i < n; i++) {
+            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, minDetectors + step * i, avgEmiters);
+            sinogram.fullProcess(maxK);
+            TomographyPicture tomografPic = new TomographyPicture(sinogram);
+            tomografPic.fullProcess();
+            resoult[0][i] = minDetectors + step * i;
+            resoult[1][i] = meanSquaredError(originalPicture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
+        }
+        return resoult;
+    }
+
+    /**
+     *
+     * @return [0/1] 0-nr iteracji , 1 - wartosci bledu sredniokwadratowego
+     */
+    private double[][] emitersFunction(int n, int minEmiters, int maxEmiters) {
+        double[][] resoult = new double[2][n];
+        int step = (maxEmiters - minEmiters) / (n - 1);
+        for (int i = 0; i < n; i++) {
+            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, minEmiters + step * i);
+            sinogram.fullProcess(maxK);
+            TomographyPicture tomografPic = new TomographyPicture(sinogram);
+            tomografPic.fullProcess();
+            resoult[0][i] = minEmiters + step * i;
+            resoult[1][i] = meanSquaredError(originalPicture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
+        }
+        return resoult;
+    }
+
+    /**
+     *
+     * @return [0/1] 0-nr iteracji , 1 - wartosci bledu sredniokwadratowego
+     */
+    private double[][] splotedFunction() {
+        double[][] resoult = new double[2][maxK + 1];
+        for (int i = 0; i <= maxK; i++) {
+            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, avgEmiters);
+            sinogram.fullProcess(i);
+            TomographyPicture tomografPic = new TomographyPicture(sinogram);
+            tomografPic.fullProcess();
+            resoult[0][i] = i;
+            resoult[1][i] = meanSquaredError(originalPicture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
+        }
+        return resoult;
+    }
+
+    /**
+     *
      * @param original pierwotny obrazek
      * @param resultant obrazek wynikowy, który chcemy porónać
      * @return błąd średniokwadratowy
      */
-    public static double meanSquaredError(Color[][] original,Color[][] resultant){
-        double sum=0;
-        int licznik=0;
+    public static double meanSquaredError(Color[][] original, Color[][] resultant) {
+        double sum = 0;
+        int licznik = 0;
         for (int i = 0; i < original.length; i++) {
             for (int j = 0; j < original[i].length; j++) {
-           sum+=pow((original[i][j].getRed()-resultant[i][j].getRed()),2); 
-           licznik++;
-            }}
-    return sum/licznik;    
+                sum += pow((original[i][j].getRed() - resultant[i][j].getRed()), 2);
+                licznik++;
+            }
+        }
+        return sum / licznik;
     }
-    
+
 }
