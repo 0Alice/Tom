@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
  * @author Ania
  */
 public class Sinogram {
+
     /**
      * kolor piksela w sinogramie przed normalizacja
      */
@@ -71,26 +72,29 @@ public class Sinogram {
         originalPicture = img.getBi();
         pix = new int[emitersAmount][detectorsAmount];
         normalizedPix = new Color[emitersAmount][detectorsAmount];
-        processed=0;
-        
+        processed = 0;
+
     }
+
     /**
-     * 
+     *
      * @param kForSplot jest parametrem k we wzorze na splot
      */
-    public void fullProcess(int kForSplot){
-    this.processing(emitersAmount,kForSplot);
+    public void fullProcess(int kForSplot) {
+        this.processing(emitersAmount, kForSplot);
+        makeResoultPicture();
     }
+
     /**
-     * 
+     *
      * @param iterations liczba iteracji które ma jeszcze wykonać algorytm
      * @param kForSplot jest parametrem k we wzorze na splot
      */
-    public void processing(int iterations, int kForSplot){
-        if(processed+iterations>=emitersAmount){
-            iterations=emitersAmount-processed;
+    public void processing(int iterations, int kForSplot) {
+        if (processed + iterations >= emitersAmount) {
+            iterations = emitersAmount - processed;
         }
-        for (int i = processed; i < processed+iterations; i++) {
+        for (int i = processed; i < processed + iterations; i++) {
             double help0 = i * Math.PI / 180;
             Double EmiterX = Math.cos(help0) * radious + radious;
             Double EmiterY = Math.sin(help0) * (-radious) + radious;
@@ -100,56 +104,68 @@ public class Sinogram {
                 Double DetektorY = Math.sin(help) * (-radious) + radious;
                 pix[i][j] = BresenhamLine(EmiterX.intValue(), EmiterY.intValue(), DetektorX.intValue(), DetektorY.intValue(), originalPicture);
             }
-            sploting(i,kForSplot);
+            sploting(i, kForSplot);
         }
-        normalize(processed+iterations);
-        for (int i = 0; i < processed+iterations; i++) {
+        normalize(processed + iterations);
+        /*
+        for (int i = 0; i < processed + iterations; i++) {
+            for (int j = 0; j < detectorsAmount; j++) {
+                sinogram.setRGB(i, j, normalizedPix[i][j].getRGB());
+            }
+        }*/
+        processed += iterations;
+    }
+    public void makeResoultPicture(){
+        for (int i = 0; i < processed; i++) {
             for (int j = 0; j < detectorsAmount; j++) {
                 sinogram.setRGB(i, j, normalizedPix[i][j].getRGB());
             }
         }
-        processed+=iterations;
     }
-    private void sploting(int row,int k){
+
+    private void sploting(int row, int k) {
         for (int i = 0; i < detectorsAmount; i++) {
-            int newColor=pix[row][i];
-        for (int j = 1; j <= k; j++) {
-        double factor = -4 / ((Math.PI * Math.PI) * (j * j));
-        if(i-j>=0)
-            newColor+=pix[row][i-j]*factor;
-        if(i+j<detectorsAmount)
-            newColor+=pix[row][i+j]*factor;
-        }
-        pix[row][i]=newColor;
+            int newColor = pix[row][i];
+            for (int j = 1; j <= k; j++) {
+                double factor = -4 / ((Math.PI * Math.PI) * (j * j));
+                if (i - j >= 0) {
+                    newColor += pix[row][i - j] * factor;
+                }
+                if (i + j < detectorsAmount) {
+                    newColor += pix[row][i + j] * factor;
+                }
+            }
+            pix[row][i] = newColor;
         }
     }
-        private void normalize(int iterations){
-        int max=0;
-        int min=255;
+
+    private void normalize(int iterations) {
+        int max = 0;
+        int min = 255;
         for (int i = 0; i < iterations; i++) {
             for (int j = 0; j < detectorsAmount; j++) {
-                int pixelColor=0;
-                try{
-                pixelColor=pix[i][j];
-                }catch(java.lang.NullPointerException z){
-                pixelColor=0;
-                pix[i][j]=0;
-            }
-                if(pixelColor>max){
-                    max=pixelColor;
+                int pixelColor = 0;
+                try {
+                    pixelColor = pix[i][j];
+                } catch (java.lang.NullPointerException z) {
+                    pixelColor = 0;
+                    pix[i][j] = 0;
                 }
-                if(pixelColor<min){
-                    min=pixelColor;
+                if (pixelColor > max) {
+                    max = pixelColor;
+                }
+                if (pixelColor < min) {
+                    min = pixelColor;
                 }
             }
         }
-         for (int i = 0; i < iterations; i++) {
+        for (int i = 0; i < iterations; i++) {
             for (int j = 0; j < detectorsAmount; j++) {
-               int kol=(int)((pix[i][j]-min)*(255.0/(max-min)));
-               normalizedPix[i][j]=new Color(kol,kol,kol);
-       }
-        
-    }
+                int kol = (int) ((pix[i][j] - min) * (255.0 / (max - min)));
+                normalizedPix[i][j] = new Color(kol, kol, kol);
+            }
+
+        }
     }
 
     // x1 , y1 - współrzędne początku odcinka
@@ -176,7 +192,7 @@ public class Sinogram {
             yi = -1;
             dy = y1 - y2;
         }
-        
+
         int pixels = image.getRGB(x, y);
         int red = (pixels & 0x00ff0000) >> 16;
         suma += red;
@@ -202,7 +218,7 @@ public class Sinogram {
                 red = (pixels & 0x00ff0000) >> 16;
                 suma += red;
                 licznik++;
-                
+
             }
         } // oś wiodąca OY
         else {
@@ -220,12 +236,12 @@ public class Sinogram {
                     d += bi;
                     y += yi;
                 }
-                
+
                 pixels = image.getRGB(x, y);
                 red = (pixels & 0x00ff0000) >> 16;
                 suma += red;
                 licznik++;
-                
+
             }
         }
         int kol = suma / licznik;
