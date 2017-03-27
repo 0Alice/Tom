@@ -493,7 +493,7 @@ public class Tomograf extends Application {
                     Picture picture = new Picture(file);
                     Image image1 = SwingFXUtils.toFXImage(picture.getBi(), null);
 
-                    sinogram = new Sinogram(picture, angle, detectors, emiters);
+                    sinogram = new Sinogram(picture, angle, detectors, emiters,true);
                     //sinogram.processing(sinogram.getEmitersAmount()+10,10);
                     //sinogram.makeResoultPicture();
 
@@ -507,7 +507,13 @@ public class Tomograf extends Application {
 //                    double bladSrednioKwadratowy = Statistic.meanSquaredError(picture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
                     //     double pierw = pow(bladSrednioKwadratowy, 0.5);
                     //     System.out.println(bladSrednioKwadratowy + " po spierwiastowaniu " + pierw);
-                    Statistic stat = new Statistic(picture, 180, 360, 300, 500, 400, 500, 20);
+                    
+
+
+//Statistic stat = new Statistic(picture, 180, 360, 300, 500, 400, 500, 20,true,20,"D:\\Projekty\\nowyTomograf\\file");
+                    
+                    
+                    
                     /**
                      * Obrazy
                      */

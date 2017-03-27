@@ -37,7 +37,7 @@ public class ExportToXLSX {
         }
     }
 
-    public void createSheet(double[][] data, String title, String sheetName, int sheetNumber) {
+    public void createSheet(double[][] data,int values, String title, String sheetName, int sheetNumber) {
         try {
             WritableSheet arkusz = workbook.createSheet(sheetName, sheetNumber);
             Label label = new Label(0, 0, title);
@@ -50,10 +50,10 @@ public class ExportToXLSX {
             WritableCellFormat format = new WritableCellFormat(NumberFormats.FLOAT);
             Number number;
             
-            for (int i = 0; i < data.length; i++) {
-                number = new Number(0, i, data[i][0], format);
+            for (int i = 0; i < values; i++) {
+                number = new Number(0,i+1, data[0][i], format);
                 arkusz.addCell(number);
-                number = new Number(1, i, data[i][1], format);
+                number = new Number(1,i+1, data[1][i], format);
                 arkusz.addCell(number);
             }
         } catch (WriteException ex) {

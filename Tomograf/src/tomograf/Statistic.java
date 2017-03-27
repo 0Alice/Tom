@@ -49,47 +49,48 @@ public class Statistic {
      * błąd średniokwadratowy w zalenosci od zastosowania Splotu i parametru k
      */
     private double[][] meanSquaredErrorOnSplot;
-
-    public Statistic(Picture img, int minangle, int maxangle, int mindetectors, int maxdetectors, int minemiters, int maxemiters, int k) {
+    private final boolean even;
+    public Statistic(Picture img, int minangle, int maxangle, int mindetectors, int maxdetectors, int minemiters, int maxemiters, int k,boolean even,int iterations,String filePath) {
         pictureWidth = img.getBi().getWidth();
         originalPicture = img;
         avgAngle = (minangle + maxangle) / 2;
         avgDetectors = (mindetectors + maxdetectors) / 2;
         avgEmiters = (minemiters + maxemiters) / 2;
         maxK = k;
-        ExportToXLSX file =new ExportToXLSX("D:\\Projekty\\nowyTomograf\\file");
+        this.even=even;
+        ExportToXLSX file =new ExportToXLSX(filePath);
         
-        int iterations = 50;
+        //int iterations = 20;
         meanSquaredErrorOnIterations = iterationsFunction(iterations);
-        file.createSheet(meanSquaredErrorOnIterations, "Iteracje", "Iteracje", 0);
+        file.createSheet(meanSquaredErrorOnIterations,iterations, "Iteracje", "Iteracje", 0);
         
         /*System.out.println("Funkcja iteracji");
         for (int i = 0; i < iterations; i++) {
             System.out.println("f(" + meanSquaredErrorOnIterations[0][i] + ")=" + meanSquaredErrorOnIterations[1][i]);
         }*/
         
-        /*
-        int angles = 11;
-        meanSquaredErrorOnAngle = anglesFunction(angles, minangle, maxangle);
-        System.out.println("Funkcja kata rozwarcia");
+        meanSquaredErrorOnAngle = anglesFunction(iterations, minangle, maxangle);
+        file.createSheet(meanSquaredErrorOnAngle,iterations, "Kąt", "Kąt", 1);
+        /*System.out.println("Funkcja kata rozwarcia");
         for (int i = 0; i < angles; i++) {
             System.out.println("f(" + meanSquaredErrorOnAngle[0][i] + ")=" + meanSquaredErrorOnAngle[1][i]);
-        }
-        int detectors = 11;
-        meanSquaredErrorOnDetectors = detectorsFunction(detectors, mindetectors, maxdetectors);
-        System.out.println("Funkcja zaleznosci od liczby detektorów");
+        }*/
+        meanSquaredErrorOnDetectors = detectorsFunction(iterations, mindetectors, maxdetectors);
+        file.createSheet(meanSquaredErrorOnDetectors,iterations, "Detektory", "Detekt", 2);
+        /*System.out.println("Funkcja zaleznosci od liczby detektorów");
         for (int i = 0; i < detectors; i++) {
             System.out.println("f(" + meanSquaredErrorOnDetectors[0][i] + ")=" + meanSquaredErrorOnDetectors[1][i]);
-        }
-        int emiters = 11;
-        meanSquaredErrorOnEmiters = emitersFunction(emiters, minemiters, maxemiters);
-        System.out.println("Funkcja zaleznosci od liczby emiterów");
+        }*/
+        meanSquaredErrorOnEmiters = emitersFunction(iterations, minemiters, maxemiters);
+        file.createSheet(meanSquaredErrorOnEmiters,iterations, "Emitery", "Emiter", 3);
+        /*System.out.println("Funkcja zaleznosci od liczby emiterów");
         for (int i = 0; i < emiters; i++) {
             System.out.println("f(" + meanSquaredErrorOnEmiters[0][i] + ")=" + meanSquaredErrorOnEmiters[1][i]);
-        }
+        }*/
         meanSquaredErrorOnSplot = splotedFunction();
         System.out.println("Funkcja zaleznosci od splotu");
-        for (int i = 0; i <= maxK; i++) {
+        file.createSheet(meanSquaredErrorOnSplot,maxK+1, "Splot", "Splot", 4);
+        /*for (int i = 0; i <= maxK; i++) {
             System.out.println("f(" + meanSquaredErrorOnSplot[0][i] + ")=" + meanSquaredErrorOnSplot[1][i]);
         }
         */
@@ -101,7 +102,7 @@ public class Statistic {
      * @return [0/1] 0-nr iteracji , 1 - wartosci bledu sredniokwadratowego
      */
     private double[][] iterationsFunction(int n) {
-        Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, avgEmiters);
+        Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, avgEmiters,even);
         sinogram.fullProcess(maxK);
         TomographyPicture tomografPic = new TomographyPicture(sinogram);
         double[][] resoult = new double[2][n];
@@ -122,7 +123,7 @@ public class Statistic {
         double[][] resoult = new double[2][n];
         int step = (maxAngle - minAngle) / (n - 1);
         for (int i = 0; i < n; i++) {
-            Sinogram sinogram = new Sinogram(originalPicture, minAngle + step * i, avgDetectors, avgEmiters);
+            Sinogram sinogram = new Sinogram(originalPicture, minAngle + step * i, avgDetectors, avgEmiters,even);
             sinogram.fullProcess(maxK);
             TomographyPicture tomografPic = new TomographyPicture(sinogram);
             tomografPic.fullProcess();
@@ -140,7 +141,7 @@ public class Statistic {
         double[][] resoult = new double[2][n];
         int step = (maxDetectors - minDetectors) / (n - 1);
         for (int i = 0; i < n; i++) {
-            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, minDetectors + step * i, avgEmiters);
+            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, minDetectors + step * i, avgEmiters,even);
             sinogram.fullProcess(maxK);
             TomographyPicture tomografPic = new TomographyPicture(sinogram);
             tomografPic.fullProcess();
@@ -158,7 +159,7 @@ public class Statistic {
         double[][] resoult = new double[2][n];
         int step = (maxEmiters - minEmiters) / (n - 1);
         for (int i = 0; i < n; i++) {
-            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, minEmiters + step * i);
+            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, minEmiters + step * i,even);
             sinogram.fullProcess(maxK);
             TomographyPicture tomografPic = new TomographyPicture(sinogram);
             tomografPic.fullProcess();
@@ -175,7 +176,7 @@ public class Statistic {
     private double[][] splotedFunction() {
         double[][] resoult = new double[2][maxK + 1];
         for (int i = 0; i <= maxK; i++) {
-            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, avgEmiters);
+            Sinogram sinogram = new Sinogram(originalPicture, avgAngle, avgDetectors, avgEmiters,even);
             sinogram.fullProcess(i);
             TomographyPicture tomografPic = new TomographyPicture(sinogram);
             tomografPic.fullProcess();
