@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Tomograf.jnlp">
+  <information>
+    <title>Tomograf</title>
+    <vendor>Ania</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Tomograf.jar" size="248604" download="eager" />
+    <jar href="lib\commons-cli-1.2.jar" size="41123" download="eager" />
+    <jar href="lib\dcm4che-audit-2.0.29.jar" size="101026" download="eager" />
+    <jar href="lib\dcm4che-base64-2.0.29.jar" size="8455" download="eager" />
+    <jar href="lib\dcm4che-core-2.0.29.jar" size="402832" download="eager" />
+    <jar href="lib\dcm4che-filecache-2.0.29.jar" size="9461" download="eager" />
+    <jar href="lib\dcm4che-hp-2.0.29.jar" size="95206" download="eager" />
+    <jar href="lib\dcm4che-image-2.0.29.jar" size="40702" download="eager" />
+    <jar href="lib\dcm4che-imageio-2.0.29.jar" size="43468" download="eager" />
+    <jar href="lib\dcm4che-imageio-rle-2.0.29.jar" size="10989" download="eager" />
+    <jar href="lib\dcm4che-iod-2.0.29.jar" size="130313" download="eager" />
+    <jar href="lib\dcm4che-net-2.0.29.jar" size="122692" download="eager" />
+    <jar href="lib\dcm4che-soundex-2.0.29.jar" size="11014" download="eager" />
+    <jar href="lib\dcm4che-tool-dcm2dcm-2.0.29.jar" size="10359" download="eager" />
+    <jar href="lib\dcm4che-tool-dcm2jpg-2.0.29.jar" size="11489" download="eager" />
+    <jar href="lib\dcm4che-tool-dcm2txt-2.0.29.jar" size="7123" download="eager" />
+    <jar href="lib\dcm4che-tool-dcm2xml-2.0.29.jar" size="7938" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmdir-2.0.29.jar" size="10649" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmecho-2.0.29.jar" size="11570" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmgpwl-2.0.29.jar" size="20200" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmhpqr-2.0.29.jar" size="16773" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmmv-2.0.29.jar" size="76435" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmmwl-2.0.29.jar" size="14690" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmof-2.0.29.jar" size="24663" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmqr-2.0.29.jar" size="31886" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmrcv-2.0.29.jar" size="23181" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmsnd-2.0.29.jar" size="25437" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmups-2.0.29.jar" size="28019" download="eager" />
+    <jar href="lib\dcm4che-tool-dcmwado-2.0.29.jar" size="13247" download="eager" />
+    <jar href="lib\dcm4che-tool-fixjpegls-2.0.29.jar" size="12858" download="eager" />
+    <jar href="lib\dcm4che-tool-jpg2dcm-2.0.29.jar" size="10016" download="eager" />
+    <jar href="lib\dcm4che-tool-logger-2.0.29.jar" size="4988" download="eager" />
+    <jar href="lib\dcm4che-tool-pdf2dcm-2.0.29.jar" size="7819" download="eager" />
+    <jar href="lib\dcm4che-tool-rgb2ybr-2.0.29.jar" size="7643" download="eager" />
+    <jar href="lib\dcm4che-tool-txt2dcmsr-2.0.29.jar" size="9017" download="eager" />
+    <jar href="lib\dcm4che-tool-xml2dcm-2.0.29.jar" size="7485" download="eager" />
+    <jar href="lib\log4j-1.2.16.jar" size="481535" download="eager" />
+    <jar href="lib\slf4j-api-1.6.1.jar" size="25496" download="eager" />
+    <jar href="lib\slf4j-log4j12-1.6.1.jar" size="9753" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Tomograf" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="tomograf.Tomograf"  name="Tomograf" />
+  <update check="always"/>
+</jnlp>
