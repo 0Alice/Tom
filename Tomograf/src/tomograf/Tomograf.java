@@ -113,6 +113,7 @@ public class Tomograf extends Application {
     String sex;
     ScrollPane scrollPane;
     ScrollPane scrollPane2;
+    BufferedImage finalBufferedImage;
 
     @Override
     public void start(Stage primaryStage) {
@@ -381,9 +382,12 @@ public class Tomograf extends Application {
             sliderPictureValue = newvalue.intValue();
             tomografPic.processing(sliderPictureValue);
             tomografPic.makeResoultPicture();
+            
             image3 = SwingFXUtils.toFXImage(tomografPic.getBuf(), null);
             tile.getChildren().remove(iw3);
-
+  if (sliderPictureValue == slider1.getMax()) {
+      finalBufferedImage=tomografPic.getBuf();
+  }
             iw3 = new ImageView(image3);
             iw3.setFitHeight(400);
             iw3.setFitWidth(400);
