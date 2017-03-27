@@ -5,12 +5,16 @@
  */
 package tomograf;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javax.imageio.ImageIO;
 import org.dcm4che2.tool.jpg2dcm.Jpg2Dcm;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
@@ -26,27 +30,29 @@ import org.dcm4che2.io.DicomOutputStream;
  * @author Ania
  */
 public class JpgDicom {
-    String  patientID="123";   // Enter Patient ID
-        String patientName="KOWALSKI"; // Enter Pantient Name
-        String studyID="123"; // Enter Study ID
+  //  String  patientID="123";   // Enter Patient ID
+        String patientName; // Enter Pantient Name
+       // String studyID="123"; // Enter Study ID
         String patientSex;
         String patientBirthDate;
         String comments;
        // String patientAge;
         String studyDate;
-   
-    public JpgDicom(String patientSex,String patientBirthDate,String comments,String studyDate,String patientName) throws FileNotFoundException, IOException
+   Image img ;
+    File jpgFileOS;
+    public JpgDicom(BufferedImage finalImage,String patientSex,String patientBirthDate,String comments,String studyDate,String patientName) throws FileNotFoundException, IOException
     {
     //  System.out.println("JPG2DCM_Convert.main()");
-        
+        jpgFileOS = new File("C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obraz.jpg");
         String end="C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obraz.dcm";
         String endFin="C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obrazF.dcm";
         
         
         Jpg2Dcm jpg2Dcm = new Jpg2Dcm();  //
-        
-        
-        File jpgFileOS = new File("C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obraz.jpg");
+         img = SwingFXUtils.toFXImage(finalImage, null);
+         ImageIO.write(finalImage, "jpg", jpgFileOS);
+       
+       
         File dcmFileOS = new File("C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obraz.dcm");
 
         try {
@@ -131,7 +137,7 @@ public class JpgDicom {
             e.printStackTrace();
         }
     }
-
+/**
    @SuppressWarnings("unused")
    private static String[] getValue(DicomObject object, int[]  PATIENT_ADDITIONAL_TAGS)
    {
@@ -147,7 +153,7 @@ public class JpgDicom {
         }
         return value;
    }
-
+*/
     public static void replaceTag(DicomObject dObj, int tag, String newValue) {
         if (tag != 0 && dObj.contains(tag)) {
             VR vr = dObj.vrOf(tag);

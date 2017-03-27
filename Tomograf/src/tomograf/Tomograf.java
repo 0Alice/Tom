@@ -203,7 +203,7 @@ public class Tomograf extends Application {
                         System.out.println("plec");
                         System.out.println(sex);
                         try {
-                            JpgDicom dicom = new JpgDicom(sex, tfd2.getText(), tfd5.getText(), tfd6.getText(), tfd1.getText());
+                            JpgDicom dicom = new JpgDicom(finalBufferedImage,sex, tfd2.getText(), tfd5.getText(), tfd6.getText(), tfd1.getText());
                         } catch (IOException ex) {
                             System.out.println("cos poszlo nie tak");
                             Logger.getLogger(Tomograf.class.getName()).log(Level.SEVERE, null, ex);
@@ -325,7 +325,7 @@ public class Tomograf extends Application {
         slider.setMinorTickCount(0);
         slider.setShowTickMarks(true);
         slider.setShowTickLabels(true);
-        // slider.setMaxSize(600, 10);
+         slider.setMaxSize(300, 10);
         slider.setMinSize(10, 10);
         slider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
 
@@ -385,6 +385,7 @@ public class Tomograf extends Application {
             
             image3 = SwingFXUtils.toFXImage(tomografPic.getBuf(), null);
             tile.getChildren().remove(iw3);
+            
   if (sliderPictureValue == slider1.getMax()) {
       finalBufferedImage=tomografPic.getBuf();
   }
@@ -439,6 +440,17 @@ public class Tomograf extends Application {
         bt1.fontProperty().set(Font.font(15));
         VBox vb7 = new VBox(bt1);
         vb7.setPadding(new Insets(15, 0, 0, 0));
+        
+        
+         Button bt2 = new Button("Wygeneruj sinogram");
+        bt2.fontProperty().set(Font.font(15));
+        VBox vb8 = new VBox(bt2);
+        vb8.setPadding(new Insets(15, 0, 0, 30));
+        
+                Button bt3 = new Button("Wygeneruj końcowy obraz");
+        bt3.fontProperty().set(Font.font(15));
+        VBox vb9 = new VBox(bt3);
+        vb9.setPadding(new Insets(15, 0, 0, 0));
 
         CheckBox chB2 = new CheckBox("Parzystość przy splocie");
         chB2.setAlignment(Pos.CENTER);
@@ -446,7 +458,7 @@ public class Tomograf extends Application {
         VBox vb5 = new VBox(chB2);
         vb5.setPadding(new Insets(20, 0, 0, 0));
 
-        HBox hb = new HBox(vb1, vb2, vb3, vb6, vb5, vb7);
+        HBox hb = new HBox(vb1, vb2, vb3, vb6, vb5, vb7,vb8,vb9);
         hb.setSpacing(30);
         hb.setPadding(new Insets(0, 30, 30, 30));
 
@@ -458,6 +470,8 @@ public class Tomograf extends Application {
                 detectors = Integer.parseInt(tf2.getText());
                 angle = Integer.parseInt(tf3.getText());
                 splot = Integer.parseInt(tf6.getText());
+                  slider.setMajorTickUnit(emiters / 10);
+                    slider1.setMajorTickUnit(emiters / 10);
             }
         });
 
