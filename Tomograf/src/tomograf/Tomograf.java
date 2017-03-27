@@ -111,9 +111,10 @@ public class Tomograf extends Application {
     ImageView iw3;
     ImageView iw2;
     Sinogram sinogram;
+    String sex;
     ScrollPane scrollPane;
     ScrollPane scrollPane2;
-String sex;
+
     @Override
     public void start(Stage primaryStage) {
         slider1.setVisible(false);
@@ -122,12 +123,16 @@ String sex;
          * Menu
          */
         Menu menu = new Menu("Opcje");
+        Menu menu2 = new Menu("Statystyki");
         MenuItem item = new MenuItem("Wybierz obraz");
         MenuItem item2 = new MenuItem("Zapis DICOM");
-        menu.getItems().add(item);
+        MenuItem item3 = new MenuItem("Błąd średniokwadratowy");
+        MenuItem item4=new MenuItem("Szczegółowe");
+        menu2.getItems().addAll(item3,item4);
+                menu.getItems().add(item);
         menu.getItems().add(item2);
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().add(menu);
+        menuBar.getMenus().addAll(menu,menu2);
         menuBar.setMinSize(sceneWidth, 25);
         menuBar.setVisible(true);
 
@@ -167,18 +172,16 @@ String sex;
                                 "F",
                                 "M"
                         );
-             
-            
-                
+
                 final ComboBox comboBox = new ComboBox(options);
                 comboBox.valueProperty().addListener(new ChangeListener() {
                     @Override
                     public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                                     
-               sex = (String) newValue;
+
+                        sex = (String) newValue;
                     }
                 });
-                
+
                 HBox hBD4 = new HBox(ld4, comboBox);
                 hBD4.setSpacing(20);
 
@@ -200,7 +203,7 @@ String sex;
                         System.out.println("plec");
                         System.out.println(sex);
                         try {
-                            JpgDicom dicom = new JpgDicom(sex, tfd2.getText(), tfd5.getText(),  tfd6.getText(), tfd1.getText());
+                            JpgDicom dicom = new JpgDicom(sex, tfd2.getText(), tfd5.getText(), tfd6.getText(), tfd1.getText());
                         } catch (IOException ex) {
                             System.out.println("cos poszlo nie tak");
                             Logger.getLogger(Tomograf.class.getName()).log(Level.SEVERE, null, ex);
@@ -209,7 +212,7 @@ String sex;
                     }
                 });
 
-                VBox vBDicom = new VBox(ld0, hBD, hBD2, hBD4, hBD6, hBD5,bt);
+                VBox vBDicom = new VBox(ld0, hBD, hBD2, hBD4, hBD6, hBD5, bt);
                 vBDicom.setSpacing(20);
                 vBDicom.setPadding(new Insets(20, 20, 20, 20));
 
