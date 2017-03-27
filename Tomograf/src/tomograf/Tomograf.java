@@ -51,7 +51,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import org.dcm4che3.tool.dcm2jpg.Dcm2Jpg;
+
 
 /**
  *

@@ -57,14 +57,18 @@ public class Statistic {
         avgDetectors = (mindetectors + maxdetectors) / 2;
         avgEmiters = (minemiters + maxemiters) / 2;
         maxK = k;
+        ExportToXLSX file =new ExportToXLSX("D:\\Projekty\\nowyTomograf\\file");
         
-        /*
         int iterations = 50;
         meanSquaredErrorOnIterations = iterationsFunction(iterations);
-        System.out.println("Funkcja iteracji");
+        file.createSheet(meanSquaredErrorOnIterations, "Iteracje", "Iteracje", 0);
+        
+        /*System.out.println("Funkcja iteracji");
         for (int i = 0; i < iterations; i++) {
             System.out.println("f(" + meanSquaredErrorOnIterations[0][i] + ")=" + meanSquaredErrorOnIterations[1][i]);
-        }
+        }*/
+        
+        /*
         int angles = 11;
         meanSquaredErrorOnAngle = anglesFunction(angles, minangle, maxangle);
         System.out.println("Funkcja kata rozwarcia");
@@ -89,6 +93,7 @@ public class Statistic {
             System.out.println("f(" + meanSquaredErrorOnSplot[0][i] + ")=" + meanSquaredErrorOnSplot[1][i]);
         }
         */
+        file.saveFile();
     }
 
     /**
