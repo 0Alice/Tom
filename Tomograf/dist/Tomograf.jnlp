@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Tomograf.jar" size="245834" download="eager" />
+    <jar href="Tomograf.jar" size="248984" download="eager" />
     <jar href="lib\clibwrapper_jiio-1.2-pre-dr-b04.jar" size="69564" download="eager" />
     <jar href="lib\commons-cli-1.2.jar" size="41123" download="eager" />
     <jar href="lib\dcm4che-audit-2.0.29.jar" size="101026" download="eager" />

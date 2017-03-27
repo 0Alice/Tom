@@ -130,13 +130,14 @@ public class Sinogram {
         for (int i = 0; i < detectorsAmount; i++) {
             int newColor = pix[row][i];
             for (int j = 1; j <= k; j++) {
+                if(j%2==1){
                 double factor = -4 / ((Math.PI * Math.PI) * (j * j));
                 if (i - j >= 0) {
                     newColor += pix[row][i - j] * factor;
                 }
                 if (i + j < detectorsAmount) {
                     newColor += pix[row][i + j] * factor;
-                }
+                }}
             }
             pix[row][i] = newColor;
         }

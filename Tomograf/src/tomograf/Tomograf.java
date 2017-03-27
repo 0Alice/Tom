@@ -51,7 +51,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import org.dcm4che3.tool.dcm2jpg.Dcm2Jpg;
 
 /**
  *
@@ -127,12 +126,12 @@ public class Tomograf extends Application {
         MenuItem item = new MenuItem("Wybierz obraz");
         MenuItem item2 = new MenuItem("Zapis DICOM");
         MenuItem item3 = new MenuItem("Błąd średniokwadratowy");
-        MenuItem item4=new MenuItem("Szczegółowe");
-        menu2.getItems().addAll(item3,item4);
-                menu.getItems().add(item);
+        MenuItem item4 = new MenuItem("Szczegółowe");
+        menu2.getItems().addAll(item3, item4);
+        menu.getItems().add(item);
         menu.getItems().add(item2);
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(menu,menu2);
+        menuBar.getMenus().addAll(menu, menu2);
         menuBar.setMinSize(sceneWidth, 25);
         menuBar.setVisible(true);
 
@@ -208,7 +207,7 @@ public class Tomograf extends Application {
                             System.out.println("cos poszlo nie tak");
                             Logger.getLogger(Tomograf.class.getName()).log(Level.SEVERE, null, ex);
                         }
-
+                        stageDicom.close();
                     }
                 });
 
@@ -226,6 +225,85 @@ public class Tomograf extends Application {
                 stageDicom.setResizable(false);
 
                 stageDicom.show();
+
+            }
+        });
+
+        item4.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                Stage stageStat = new Stage();
+
+                /**
+                 * Identyfikator pacjenta Nazwisko pacjenta Data urodzin
+                 * pacjenta Płeć pacjenta Wiek pacjenta Data badania Komentarze?
+                 * Badana czesc cisla
+                 */
+                Label ls0 = new Label("   STATYSTYKI");
+                ls0.fontProperty().set(Font.font(20));
+                ls0.setAlignment(Pos.CENTER);
+
+                Label ls1 = new Label("Min liczba emiterów");
+                TextField tfs1 = new TextField();
+                HBox hBs1 = new HBox(ls1, tfs1);
+                hBs1.setSpacing(20);
+
+                Label ls2 = new Label("Max liczba emiterów");
+                TextField tfs2 = new TextField();
+                HBox hBs2 = new HBox(ls2, tfs2);
+                hBs2.setSpacing(20);
+
+                Label ls3 = new Label("Min liczba detektorów");
+                TextField tfs3 = new TextField();
+                HBox hBs3 = new HBox(ls3, tfs3);
+                hBs3.setSpacing(20);
+
+                Label ls4 = new Label("Max liczba detektorów");
+                TextField tfs4 = new TextField();
+                HBox hBs4 = new HBox(ls4, tfs4);
+                hBs4.setSpacing(20);
+
+                Label ls5 = new Label("Min kąt");
+                TextField tfs5 = new TextField();
+                HBox hBs5 = new HBox(ls5, tfs5);
+                hBs5.setSpacing(20);
+
+                Label ls6 = new Label("Max kąt");
+                TextField tfs6 = new TextField();
+                HBox hBs6 = new HBox(ls6, tfs6);
+                hBs6.setSpacing(20);
+
+                Label ls7 = new Label("Max parametr splotu");
+                TextField tfs7 = new TextField();
+                HBox hBs7 = new HBox(ls7, tfs7);
+                hBs7.setSpacing(20);
+
+                CheckBox chB = new CheckBox("Parzystość przy splocie");
+
+                Button bts1 = new Button("Oblicz");
+                bts1.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+
+                        stageStat.close();
+                    }
+                });
+
+                VBox vbStat = new VBox(hBs1, hBs2, hBs3, hBs4, hBs5, hBs6, hBs7, chB, bts1);
+                vbStat.setSpacing(20);
+                vbStat.setPadding(new Insets(20, 20, 20, 20));
+
+                Scene scene1 = new Scene(vbStat, 400, 400);
+
+                // sc.set
+                stageStat.setMinWidth(300);
+                stageStat.setMinHeight(300);
+                stageStat.setTitle("Szczegółowe statystyki");
+                stageStat.setScene(scene1);
+                stageStat.setResizable(false);
+
+                stageStat.show();
 
             }
         });
@@ -355,9 +433,16 @@ public class Tomograf extends Application {
 
         Button bt1 = new Button("Zapisz");
         bt1.fontProperty().set(Font.font(15));
-        VBox vb5 = new VBox(bt1);
+        VBox vb7 = new VBox(bt1);
+        vb7.setPadding(new Insets(15, 0, 0, 0));
 
-        HBox hb = new HBox(vb1, vb2, vb3, vb6, vb5);
+        CheckBox chB2 = new CheckBox("Parzystość przy splocie");
+        chB2.setAlignment(Pos.CENTER);
+        chB2.fontProperty().set(Font.font(15));
+        VBox vb5 = new VBox(chB2);
+        vb5.setPadding(new Insets(20, 0, 0, 0));
+
+        HBox hb = new HBox(vb1, vb2, vb3, vb6, vb5, vb7);
         hb.setSpacing(30);
         hb.setPadding(new Insets(0, 30, 30, 30));
 
