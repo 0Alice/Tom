@@ -47,6 +47,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollBar;
@@ -114,6 +115,10 @@ public class Tomograf extends Application {
     ScrollPane scrollPane;
     ScrollPane scrollPane2;
     BufferedImage finalBufferedImage;
+    ImageView iw1;
+    Slider slider;
+    Label label1;
+    Label label2;
 
     @Override
     public void start(Stage primaryStage) {
@@ -203,7 +208,7 @@ public class Tomograf extends Application {
                         System.out.println("plec");
                         System.out.println(sex);
                         try {
-                            JpgDicom dicom = new JpgDicom(finalBufferedImage,sex, tfd2.getText(), tfd5.getText(), tfd6.getText(), tfd1.getText());
+                            JpgDicom dicom = new JpgDicom(finalBufferedImage, sex, tfd2.getText(), tfd5.getText(), tfd6.getText(), tfd1.getText());
                         } catch (IOException ex) {
                             System.out.println("cos poszlo nie tak");
                             Logger.getLogger(Tomograf.class.getName()).log(Level.SEVERE, null, ex);
@@ -312,99 +317,6 @@ public class Tomograf extends Application {
         /**
          * Slidery
          */
-        Label label1 = new Label("Sinogram");
-        Label label2 = new Label("Obraz końcowy");
-        label1.fontProperty().set(Font.font(20));
-        label2.fontProperty().set(Font.font(20));
-
-        Slider slider = new Slider();
-        slider.setOrientation(Orientation.HORIZONTAL);
-        slider.setMax(emiters);
-        slider.setMin(0);
-        slider.setMajorTickUnit(emiters / 10);
-        slider.setMinorTickCount(0);
-        slider.setShowTickMarks(true);
-        slider.setShowTickLabels(true);
-         slider.setMaxSize(300, 10);
-        slider.setMinSize(10, 10);
-        slider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
-
-            sliderSinogramValue = newvalue.intValue();
-            // sinogram.fullProcess(12);
-            sinogram.processing(sliderSinogramValue, 16);
-            sinogram.makeResoultPicture();
-            /**
-             * tile.getChildren().clear();
-             * System.out.println(tile.getChildren()); pane.setCenter(null);
-             *
-             */
-
-            image2 = SwingFXUtils.toFXImage(sinogram.getSinogram(), null);
-            // System.out.println("slider1");
-            tile.getChildren().remove(iw2);
-
-            iw2 = new ImageView(image2);
-            iw2.setFitHeight(400);
-            iw2.setFitWidth(400);
-
-            tile.getChildren().add(iw2);
-
-            if (sliderSinogramValue == slider.getMax()) {
-
-                slider1.setVisible(true);
-
-                tomografPic = new TomographyPicture(sinogram);
-                //tomografPic.fullProcess();
-                //tomografPic.processing(sinogram.getEmitersAmount()+10);
-                //Image image3 = SwingFXUtils.toFXImage(tomografPic.makeAndReturnFullResoultPicture(), null);
-            } else {
-                slider1.setVisible(false);
-            }
-        });
-//
-
-        slider1.setMin(0);
-
-        slider1.setMax(emiters);
-        slider1.setMajorTickUnit(emiters / 10);
-        slider1.setMinorTickCount(0);
-        slider1.setShowTickMarks(true);
-        slider1.setShowTickLabels(true);
-        slider1.showTickMarksProperty();
-        slider1.setSnapToTicks(true);
-        // slider1.setMinSize(100, 10);
-        slider1.setOrientation(Orientation.HORIZONTAL);
-        slider1.resize(100, 10);
-        //domyslna wartosc
-        //slider1.adjustValue(10.0);
-        slider1.valueProperty().addListener((observable, oldvalue, newvalue) -> {
-
-            sliderPictureValue = newvalue.intValue();
-            tomografPic.processing(sliderPictureValue);
-            tomografPic.makeResoultPicture();
-            
-            image3 = SwingFXUtils.toFXImage(tomografPic.getBuf(), null);
-            tile.getChildren().remove(iw3);
-            
-  if (sliderPictureValue == slider1.getMax()) {
-      finalBufferedImage=tomografPic.getBuf();
-  }
-            iw3 = new ImageView(image3);
-            iw3.setFitHeight(400);
-            iw3.setFitWidth(400);
-            tile.getChildren().add(iw3);
-            // pane.setCenter(tile);
-
-        });
-
-        vb.setSpacing(20);
-        vb.setPadding(new Insets(20, 30, 20, 30));
-        vb.getChildren().add(label1);
-        vb.getChildren().add(slider);
-
-        vb.getChildren().add(label2);
-        vb.getChildren().add(slider1);
-
         /**
          * Emitery, detektory, kąt
          */
@@ -440,17 +352,41 @@ public class Tomograf extends Application {
         bt1.fontProperty().set(Font.font(15));
         VBox vb7 = new VBox(bt1);
         vb7.setPadding(new Insets(15, 0, 0, 0));
-        
-        
-         Button bt2 = new Button("Wygeneruj sinogram");
+
+        Button bt2 = new Button("Wygeneruj sinogram");
         bt2.fontProperty().set(Font.font(15));
         VBox vb8 = new VBox(bt2);
         vb8.setPadding(new Insets(15, 0, 0, 30));
-        
-                Button bt3 = new Button("Wygeneruj końcowy obraz");
+
+        bt2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                sinogram.fullProcess(splot);
+                sinogram.makeResoultPicture();
+                image2 = SwingFXUtils.toFXImage(sinogram.getSinogram(), null);
+                iw2 = new ImageView(image2);
+                iw2.setFitHeight(400);
+                iw2.setFitWidth(400);
+                tile.getChildren().add(iw2);
+                tomografPic = new TomographyPicture(sinogram);
+            }
+        });
+
+        Button bt3 = new Button("Wygeneruj końcowy obraz");
         bt3.fontProperty().set(Font.font(15));
         VBox vb9 = new VBox(bt3);
         vb9.setPadding(new Insets(15, 0, 0, 0));
+
+        bt3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                image3 = SwingFXUtils.toFXImage(tomografPic.makeAndReturnFullResoultPicture(), null);
+                iw3 = new ImageView(image3);
+                iw3.setFitHeight(400);
+                iw3.setFitWidth(400);
+                tile.getChildren().add(iw3);
+            }
+        });
 
         CheckBox chB2 = new CheckBox("Parzystość przy splocie");
         chB2.setAlignment(Pos.CENTER);
@@ -458,7 +394,7 @@ public class Tomograf extends Application {
         VBox vb5 = new VBox(chB2);
         vb5.setPadding(new Insets(20, 0, 0, 0));
 
-        HBox hb = new HBox(vb1, vb2, vb3, vb6, vb5, vb7,vb8,vb9);
+        HBox hb = new HBox(vb1, vb2, vb3, vb6, vb5, vb7, vb8, vb9);
         hb.setSpacing(30);
         hb.setPadding(new Insets(0, 30, 30, 30));
 
@@ -470,8 +406,7 @@ public class Tomograf extends Application {
                 detectors = Integer.parseInt(tf2.getText());
                 angle = Integer.parseInt(tf3.getText());
                 splot = Integer.parseInt(tf6.getText());
-                  slider.setMajorTickUnit(emiters / 10);
-                    slider1.setMajorTickUnit(emiters / 10);
+
             }
         });
 
@@ -500,8 +435,108 @@ public class Tomograf extends Application {
                 new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent e) {
+
+                tile.getChildren().removeAll(iw1, iw2, iw3);
+                vb.getChildren().removeAll(label1, label2, slider, slider1);
+
                 file = new File("D:\\Projekty\\tomograf\\Tomograf\\src\\tomograf\\obraz3.bmp");
                 if (file != null) {
+                    label1 = new Label("Sinogram");
+                    label2 = new Label("Obraz końcowy");
+                    label1.fontProperty().set(Font.font(20));
+                    label2.fontProperty().set(Font.font(20));
+
+                    slider = new Slider();
+                    slider.setOrientation(Orientation.HORIZONTAL);
+                    slider.setMax(emiters);
+                    slider.setMin(0);
+                    slider.setMajorTickUnit(emiters / 10);
+                    slider.setMinorTickCount(0);
+                    slider.setShowTickMarks(true);
+                    slider.setShowTickLabels(true);
+                    slider.setMaxSize(400, 10);
+                    slider.setMinSize(10, 10);
+                    slider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
+
+                        sliderSinogramValue = newvalue.intValue();
+                        // sinogram.fullProcess(12);
+                        sinogram.processing(sliderSinogramValue, 16);
+                        sinogram.makeResoultPicture();
+                        /**
+                         * tile.getChildren().clear();
+                         * System.out.println(tile.getChildren());
+                         * pane.setCenter(null);
+                         *
+                         */
+
+                        image2 = SwingFXUtils.toFXImage(sinogram.getSinogram(), null);
+                        // System.out.println("slider1");
+                        tile.getChildren().remove(iw2);
+
+                        iw2 = new ImageView(image2);
+                        iw2.setFitHeight(400);
+                        iw2.setFitWidth(400);
+
+                        tile.getChildren().add(iw2);
+
+                        if (sliderSinogramValue == slider.getMax()) {
+
+                            slider1.setVisible(true);
+
+                            tomografPic = new TomographyPicture(sinogram);
+                            //tomografPic.fullProcess();
+                            //tomografPic.processing(sinogram.getEmitersAmount()+10);
+                            //Image image3 = SwingFXUtils.toFXImage(tomografPic.makeAndReturnFullResoultPicture(), null);
+                        } else {
+                            slider1.setVisible(false);
+                        }
+                    });
+//
+
+                    slider1.setMin(0);
+
+                    slider1.setMax(emiters);
+                    slider1.setMajorTickUnit(emiters / 10);
+                    slider1.setMinorTickCount(0);
+                    slider1.setShowTickMarks(true);
+                    slider1.setShowTickLabels(true);
+                    slider1.showTickMarksProperty();
+                    slider1.setSnapToTicks(true);
+                    // slider1.setMinSize(100, 10);
+                    slider1.setOrientation(Orientation.HORIZONTAL);
+                    slider1.resize(100, 10);
+                    slider1.setMaxSize(400, 10);
+                    //domyslna wartosc
+                    //slider1.adjustValue(10.0);
+                    slider1.valueProperty().addListener((observable, oldvalue, newvalue) -> {
+
+                        sliderPictureValue = newvalue.intValue();
+                        tomografPic.processing(sliderPictureValue);
+                        tomografPic.makeResoultPicture();
+
+                        image3 = SwingFXUtils.toFXImage(tomografPic.getBuf(), null);
+                        tile.getChildren().remove(iw3);
+
+                        if (sliderPictureValue == slider1.getMax()) {
+                            finalBufferedImage = tomografPic.getBuf();
+                        }
+                        iw3 = new ImageView(image3);
+                        iw3.setFitHeight(400);
+                        iw3.setFitWidth(400);
+                        tile.getChildren().add(iw3);
+                        // pane.setCenter(tile);
+
+                    });
+
+                    vb.setSpacing(20);
+                    vb.setPadding(new Insets(20, 30, 20, 30));
+                    vb.getChildren().add(label1);
+                    vb.getChildren().add(slider);
+
+                    vb.getChildren().add(label2);
+                    vb.getChildren().add(slider1);
+
+                    // tile.getChildren().removeAll(iw1, iw2, iw3);
                     //  System.out.println("srodek");
                     Picture picture = new Picture(file);
                     Image image1 = SwingFXUtils.toFXImage(picture.getBi(), null);
@@ -529,7 +564,7 @@ public class Tomograf extends Application {
                     tile.setAlignment(Pos.CENTER);
                     tile.setHgap(20);
 
-                    ImageView iw1 = new ImageView(image1);
+                    iw1 = new ImageView(image1);
 
                     iw1.setFitHeight(400);
                     iw1.setFitWidth(400);
@@ -546,6 +581,7 @@ public class Tomograf extends Application {
                     //              scrollPane2.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
                     pane.setCenter(scrollPane2);
+
                     //  System.out.println("drugi");
                 }
             }

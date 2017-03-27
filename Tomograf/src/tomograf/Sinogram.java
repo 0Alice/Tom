@@ -82,7 +82,7 @@ public class Sinogram {
      */
     public void fullProcess(int kForSplot) {
         this.processing(emitersAmount, kForSplot);
-        makeResoultPicture();
+       // makeResoultPicture();
     }
 
     /**
