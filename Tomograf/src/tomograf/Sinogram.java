@@ -54,7 +54,10 @@ public class Sinogram {
      * szerokosc wejsciowego obrazu
      */
     private final int pictureWidth;
-
+    /**
+     * czy rozrozniamy parzyste i nieparzyste liczby
+     */
+    private final boolean even;
     /**
      *
      * @param img Obrazek wejsciowy
@@ -62,7 +65,7 @@ public class Sinogram {
      * @param detecotrs liczba detektorów
      * @param emiters liczba emiterów
      */
-    public Sinogram(Picture img, int angle, int detecotrs, int emiters) {
+    public Sinogram(Picture img, int angle, int detecotrs, int emiters,boolean even) {
         this.angle = angle;
         emitersAmount = emiters;
         detectorsAmount = detecotrs;
@@ -73,6 +76,7 @@ public class Sinogram {
         pix = new int[emitersAmount][detectorsAmount];
         normalizedPix = new Color[emitersAmount][detectorsAmount];
         processed = 0;
+        this.even=even;
 
     }
 
@@ -125,12 +129,16 @@ public class Sinogram {
             }
         }
     }
-
+    /**
+     * 
+     * @param row nr wiersza w sinogramie
+     * @param k parametr splotu (ile bocznych wartosci branych pod uwage)
+     */
     private void sploting(int row, int k) {
         for (int i = 0; i < detectorsAmount; i++) {
             int newColor = pix[row][i];
             for (int j = 1; j <= k; j++) {
-                if(j%2==1){
+                if(!even||j%2==1){
                 double factor = -4 / ((Math.PI * Math.PI) * (j * j));
                 if (i - j >= 0) {
                     newColor += pix[row][i - j] * factor;
