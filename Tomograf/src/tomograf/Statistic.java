@@ -59,32 +59,32 @@ public class Statistic {
         maxK = k;
         this.even=even;
         ExportToXLSX file =new ExportToXLSX(filePath);
-        
+        System.out.println("Statystyki");
         //int iterations = 20;
         meanSquaredErrorOnIterations = iterationsFunction(iterations);
         file.createSheet(meanSquaredErrorOnIterations,iterations, "Iteracje", "Iteracje", 0);
         
-        /*System.out.println("Funkcja iteracji");
-        for (int i = 0; i < iterations; i++) {
+        System.out.println("Funkcja iteracji");
+        /*for (int i = 0; i < iterations; i++) {
             System.out.println("f(" + meanSquaredErrorOnIterations[0][i] + ")=" + meanSquaredErrorOnIterations[1][i]);
         }*/
         
         meanSquaredErrorOnAngle = anglesFunction(iterations, minangle, maxangle);
         file.createSheet(meanSquaredErrorOnAngle,iterations, "Kąt", "Kąt", 1);
-        /*System.out.println("Funkcja kata rozwarcia");
-        for (int i = 0; i < angles; i++) {
+        System.out.println("Funkcja kata rozwarcia");
+        /*for (int i = 0; i < angles; i++) {
             System.out.println("f(" + meanSquaredErrorOnAngle[0][i] + ")=" + meanSquaredErrorOnAngle[1][i]);
         }*/
         meanSquaredErrorOnDetectors = detectorsFunction(iterations, mindetectors, maxdetectors);
         file.createSheet(meanSquaredErrorOnDetectors,iterations, "Detektory", "Detekt", 2);
-        /*System.out.println("Funkcja zaleznosci od liczby detektorów");
-        for (int i = 0; i < detectors; i++) {
+        System.out.println("Funkcja zaleznosci od liczby detektorów");
+        /*for (int i = 0; i < detectors; i++) {
             System.out.println("f(" + meanSquaredErrorOnDetectors[0][i] + ")=" + meanSquaredErrorOnDetectors[1][i]);
         }*/
         meanSquaredErrorOnEmiters = emitersFunction(iterations, minemiters, maxemiters);
         file.createSheet(meanSquaredErrorOnEmiters,iterations, "Emitery", "Emiter", 3);
-        /*System.out.println("Funkcja zaleznosci od liczby emiterów");
-        for (int i = 0; i < emiters; i++) {
+        System.out.println("Funkcja zaleznosci od liczby emiterów");
+        /*for (int i = 0; i < emiters; i++) {
             System.out.println("f(" + meanSquaredErrorOnEmiters[0][i] + ")=" + meanSquaredErrorOnEmiters[1][i]);
         }*/
         meanSquaredErrorOnSplot = splotedFunction();
@@ -95,6 +95,7 @@ public class Statistic {
         }
         */
         file.saveFile();
+        System.out.println("KONIEC");
     }
 
     /**

@@ -298,10 +298,11 @@ chB.setSelected(true);
                         File file1 = fileChooser1.showSaveDialog(primaryStage);
 
                         // file1 = fileChooser1.showOpenDialog(primaryStage);
-                        if (file != null) {
+                        if (file1 != null) {
                             Statistic stat = new Statistic(picture, Integer.parseInt(tfs5.getText()), Integer.parseInt(tfs6.getText()), Integer.parseInt(tfs3.getText()), Integer.parseInt(tfs4.getText()), Integer.parseInt(tfs1.getText()), Integer.parseInt(tfs2.getText()), Integer.parseInt(tfs7.getText()), chB.isSelected(), 20, file1.getAbsolutePath());
+                         stageStat.close();
                         }
-                        stageStat.close();
+                       
                     }
                 });
 
