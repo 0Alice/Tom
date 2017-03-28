@@ -53,7 +53,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 
-
 /**
  *
  * @author Ania
@@ -120,6 +119,8 @@ public class Tomograf extends Application {
     Slider slider;
     Label label1;
     Label label2;
+    Picture picture;
+    File file1;
 
     @Override
     public void start(Stage primaryStage) {
@@ -133,12 +134,12 @@ public class Tomograf extends Application {
         MenuItem item = new MenuItem("Wybierz obraz");
         MenuItem item2 = new MenuItem("Zapis DICOM");
         MenuItem item3 = new MenuItem("Błąd średniokwadratowy");
-        MenuItem item4=new MenuItem("Szczegółowe");
-        menu2.getItems().addAll(item3,item4);
-                menu.getItems().add(item);
+        MenuItem item4 = new MenuItem("Szczegółowe");
+        menu2.getItems().addAll(item3, item4);
+        menu.getItems().add(item);
         menu.getItems().add(item2);
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(menu,menu2);
+        menuBar.getMenus().addAll(menu, menu2);
         menuBar.setMinSize(sceneWidth, 25);
         menuBar.setVisible(true);
 
@@ -209,7 +210,7 @@ public class Tomograf extends Application {
                         System.out.println("plec");
                         System.out.println(sex);
                         try {
-                            JpgDicom dicom = new JpgDicom(finalBufferedImage, sex, tfd2.getText(), tfd5.getText(), tfd6.getText(), tfd1.getText());
+                            JpgDicom dicom = new JpgDicom(primaryStage, finalBufferedImage, sex, tfd2.getText(), tfd5.getText(), tfd6.getText(), tfd1.getText());
                         } catch (IOException ex) {
                             System.out.println("cos poszlo nie tak");
                             Logger.getLogger(Tomograf.class.getName()).log(Level.SEVERE, null, ex);
@@ -242,7 +243,7 @@ public class Tomograf extends Application {
 
                 Stage stageStat = new Stage();
 
-        /**
+                /**
                  * Identyfikator pacjenta Nazwisko pacjenta Data urodzin
                  * pacjenta Płeć pacjenta Wiek pacjenta Data badania Komentarze?
                  * Badana czesc cisla
@@ -287,12 +288,19 @@ public class Tomograf extends Application {
                 hBs7.setSpacing(20);
 
                 CheckBox chB = new CheckBox("Parzystość przy splocie");
-
+chB.setSelected(true);
                 Button bts1 = new Button("Oblicz");
                 bts1.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
 
+                        FileChooser fileChooser1 = new FileChooser();
+                        File file1 = fileChooser1.showSaveDialog(primaryStage);
+
+                        // file1 = fileChooser1.showOpenDialog(primaryStage);
+                        if (file != null) {
+                            Statistic stat = new Statistic(picture, Integer.parseInt(tfs5.getText()), Integer.parseInt(tfs6.getText()), Integer.parseInt(tfs3.getText()), Integer.parseInt(tfs4.getText()), Integer.parseInt(tfs1.getText()), Integer.parseInt(tfs2.getText()), Integer.parseInt(tfs7.getText()), chB.isSelected(), 20, file1.getAbsolutePath());
+                        }
                         stageStat.close();
                     }
                 });
@@ -315,6 +323,48 @@ public class Tomograf extends Application {
             }
         });
 
+        item3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                double result = Statistic.meanSquaredError(picture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
+
+                Stage stage3 = new Stage();
+
+                Label l1 = new Label("Błąd średniokwadratowy");
+                System.out.println(result);
+                l1.fontProperty().set(Font.font(15));
+                Label l2 = new Label(String.valueOf(result));
+                l2.fontProperty().set(Font.font(15));
+                HBox hBox = new HBox(l1, l2);
+                hBox.setSpacing(20);
+                Button button = new Button("OK");
+                button.fontProperty().set(Font.font(15));
+                button.setAlignment(Pos.CENTER);
+                VBox vbScene2 = new VBox(hBox, button);
+                vbScene2.setAlignment(Pos.CENTER);
+                vbScene2.setPadding(new Insets(0, 30, 0, 20));
+                vbScene2.setSpacing(50);
+
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        stage3.close();
+                    }
+                });
+
+                Scene scene2 = new Scene(vbScene2, 400, 200);
+
+                // sc.set
+                stage3.setMinWidth(400);
+                stage3.setMinHeight(200);
+                stage3.setTitle("Błąd średniowadratowy");
+                stage3.setScene(scene2);
+                stage3.setResizable(false);
+
+                stage3.show();
+
+            }
+        });
         /**
          * Slidery
          */
@@ -382,6 +432,7 @@ public class Tomograf extends Application {
             @Override
             public void handle(ActionEvent event) {
                 image3 = SwingFXUtils.toFXImage(tomografPic.makeAndReturnFullResoultPicture(), null);
+                finalBufferedImage = tomografPic.getBuf();
                 iw3 = new ImageView(image3);
                 iw3.setFitHeight(400);
                 iw3.setFitWidth(400);
@@ -390,6 +441,7 @@ public class Tomograf extends Application {
         });
 
         CheckBox chB2 = new CheckBox("Parzystość przy splocie");
+        chB2.setSelected(true);
         chB2.setAlignment(Pos.CENTER);
         chB2.fontProperty().set(Font.font(15));
         VBox vb5 = new VBox(chB2);
@@ -436,11 +488,11 @@ public class Tomograf extends Application {
                 new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent e) {
-
+                File file = fileChooser.showOpenDialog(primaryStage);
                 tile.getChildren().removeAll(iw1, iw2, iw3);
                 vb.getChildren().removeAll(label1, label2, slider, slider1);
 
-                file = new File("D:\\Projekty\\tomograf\\Tomograf\\src\\tomograf\\obraz3.bmp");
+                // file = new File("D:\\Projekty\\tomograf\\Tomograf\\src\\tomograf\\obraz3.bmp");
                 if (file != null) {
                     label1 = new Label("Sinogram");
                     label2 = new Label("Obraz końcowy");
@@ -539,10 +591,10 @@ public class Tomograf extends Application {
 
                     // tile.getChildren().removeAll(iw1, iw2, iw3);
                     //  System.out.println("srodek");
-                    Picture picture = new Picture(file);
+                    picture = new Picture(file);
                     Image image1 = SwingFXUtils.toFXImage(picture.getBi(), null);
 
-                    sinogram = new Sinogram(picture, angle, detectors, emiters,true);
+                    sinogram = new Sinogram(picture, angle, detectors, emiters, chB2.isSelected());
                     //sinogram.processing(sinogram.getEmitersAmount()+10,10);
                     //sinogram.makeResoultPicture();
 
@@ -556,13 +608,7 @@ public class Tomograf extends Application {
 //                    double bladSrednioKwadratowy = Statistic.meanSquaredError(picture.getColorsOfPixels(), tomografPic.getColorsOfPixels());
                     //     double pierw = pow(bladSrednioKwadratowy, 0.5);
                     //     System.out.println(bladSrednioKwadratowy + " po spierwiastowaniu " + pierw);
-                    
-
-
 //Statistic stat = new Statistic(picture, 180, 360, 300, 500, 400, 500, 20,true,20,"D:\\Projekty\\nowyTomograf\\file");
-                    
-                    
-                    
                     /**
                      * Obrazy
                      */

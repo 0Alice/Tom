@@ -14,6 +14,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import org.dcm4che2.tool.jpg2dcm.Jpg2Dcm;
 import org.dcm4che2.data.DicomObject;
@@ -40,12 +42,12 @@ public class JpgDicom {
         String studyDate;
    Image img ;
     File jpgFileOS;
-    public JpgDicom(BufferedImage finalImage,String patientSex,String patientBirthDate,String comments,String studyDate,String patientName) throws FileNotFoundException, IOException
+    public JpgDicom(Stage primaryStage,BufferedImage finalImage,String patientSex,String patientBirthDate,String comments,String studyDate,String patientName) throws FileNotFoundException, IOException
     {
     //  System.out.println("JPG2DCM_Convert.main()");
         jpgFileOS = new File("C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obraz.jpg");
         String end="C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obraz.dcm";
-        String endFin="C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obrazF.dcm";
+       String endFin="C:\\Users\\Ania\\Desktop\\New Folder\\Tomograf\\src\\tomograf\\obrazF.dcm";
         
         
         Jpg2Dcm jpg2Dcm = new Jpg2Dcm();  //
@@ -60,13 +62,20 @@ public class JpgDicom {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
+        System.out.println("1");
+                        FileChooser fileChooser1 = new FileChooser();
+                        System.out.println("2");
+                        File file1 = fileChooser1.showSaveDialog(primaryStage);
+                        System.out.println("3");
+                        if(file1!=null){
+                            System.out.println("4");
+                           String str= file1.getAbsolutePath()+".dcm";
+                           
       try {
-           anonymizeDicom(new File(end),new File(endFin),patientSex,patientBirthDate,comments,studyDate,patientName);   // Set the DICOM Header
+           anonymizeDicom(new File(end),new File(str),patientSex,patientBirthDate,comments,studyDate,patientName);   // Set the DICOM Header
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }}
     }
     
     
